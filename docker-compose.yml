@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: thepictory-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: thepictory
+      POSTGRES_PASSWORD: thepictory_dev_password
+      POSTGRES_DB: thepictory
+    ports:
+      - "5432:5432"
+    volumes:
+      - thepictory_pg_data:/var/lib/postgresql/data
+
+volumes:
+  thepictory_pg_data:

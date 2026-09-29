@@ -1,0 +1,6 @@
+@ThePictory.Api_HostAddress = http://localhost:5058
+
+GET {{ThePictory.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
