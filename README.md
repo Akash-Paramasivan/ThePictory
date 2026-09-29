@@ -60,3 +60,35 @@ Public site: http://localhost:5173. Admin portal: http://localhost:5173/admin/lo
 - The admin OTP code and contact form notifications require valid SMTP credentials; without them, login/contact requests will fail at the email-send step (this is expected until configured).
 - File uploads are restricted to JPEG/PNG/WEBP, max 10 MB, validated both client- and server-side.
 - Rate limiting is applied to `/api/auth/*` and `/api/contact` to reduce brute-force/spam risk.
+
+## Deployment (recommended low-cost path)
+
+| Layer | Provider |
+|---|---|
+| Frontend (`client/`) | Cloudflare Pages (free, commercial use allowed) |
+| API (`server/ThePictory.Api/`) | Render (Docker Web Service) |
+| Database | Neon (managed Postgres, free tier) |
+| Images | Cloudinary |
+| Email | Brevo or SendGrid (SMTP) |
+
+### API on Render
+1. Push this repo to GitHub/GitLab.
+2. Create a new **Web Service** on Render, pointing at `server/ThePictory.Api/Dockerfile` (root directory: `server/ThePictory.Api`).
+3. Set environment variables (Render injects `PORT` automatically, the Dockerfile already respects it):
+   - `ConnectionStrings__DefaultConnection` — Neon connection string
+   - `Jwt__Secret`, `Jwt__Issuer`, `Jwt__Audience`
+   - `InitialAdmin__Username`, `InitialAdmin__Email`, `InitialAdmin__Password` (remove after first successful deploy/seed)
+   - `Email__SmtpHost`, `Email__SmtpPort`, `Email__SmtpUser`, `Email__SmtpPassword`, `Email__FromAddress`, `Email__AdminNotificationAddress`
+   - `Cloudinary__CloudName`, `Cloudinary__ApiKey`, `Cloudinary__ApiSecret`
+   - `Cors__AllowedOrigins__0` — your production frontend URL
+4. Start on the free tier to validate, then switch to **Starter** ($7/mo) once live to avoid cold-start delays.
+
+### Frontend on Cloudflare Pages
+1. Connect the repo, set build directory to `client/`, build command `npm run build`, output directory `dist`.
+2. Set env var `VITE_API_BASE_URL` to the Render API URL (e.g. `https://api.yourdomain.com`).
+3. Attach your custom domain once purchased.
+
+### Database on Neon
+1. Create a project/database, copy the connection string into Render's `ConnectionStrings__DefaultConnection`.
+2. Migrations apply automatically on API startup (`db.Database.MigrateAsync()` in `Program.cs`).
+

@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -72,16 +73,22 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
+// Render/Cloudflare terminate TLS at the edge and forward plain HTTP; trust their X-Forwarded-* headers
+// instead of redirecting to HTTPS ourselves (which would otherwise loop behind the proxy).
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseHttpsRedirection();
 }
 else
 {
     app.UseHsts();
 }
-
-app.UseHttpsRedirection();
 
 app.UseCors("Frontend");
 
