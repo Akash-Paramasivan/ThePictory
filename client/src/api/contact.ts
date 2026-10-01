@@ -2,15 +2,24 @@ import { apiFetch } from './client';
 
 export interface ContactSubmission {
   id: number;
-  name: string;
-  email: string;
-  phone: string | null;
-  message: string;
+  eventType: string;
+  photographyDays: string;
+  budget: string;
+  fullName: string;
+  whatsAppCountryCode: string;
+  whatsAppNumber: string;
   submittedAt: string;
   isRead: boolean;
 }
 
-export function submitContactForm(data: { name: string; email: string; phone?: string; message: string }) {
+export function submitContactForm(data: {
+  eventType: string;
+  photographyDays: string;
+  budget: string;
+  fullName: string;
+  whatsAppCountryCode: string;
+  whatsAppNumber: string;
+}) {
   return apiFetch<{ message: string }>('/api/contact', {
     method: 'POST',
     body: JSON.stringify(data),

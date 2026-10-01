@@ -24,10 +24,11 @@ export default function ContactsAdmin() {
             <div className="flex justify-between items-start gap-4">
               <div>
                 <p className="font-medium">
-                  {s.name} <span className="text-neutral-400 font-normal">&lt;{s.email}&gt;</span>
+                  {s.fullName} <span className="text-neutral-400 font-normal">({s.whatsAppCountryCode} {s.whatsAppNumber})</span>
                 </p>
-                {s.phone && <p className="text-sm text-neutral-500">{s.phone}</p>}
-                <p className="text-sm mt-2 whitespace-pre-wrap">{s.message}</p>
+                <p className="text-sm text-neutral-600 mt-1">
+                  {s.eventType} &middot; {s.photographyDays} &middot; {s.budget}
+                </p>
                 <p className="text-xs text-neutral-400 mt-2">{new Date(s.submittedAt).toLocaleString()}</p>
               </div>
               {!s.isRead && (
