@@ -7,6 +7,7 @@ const links = [
   { to: '/admin/media', label: 'Media' },
   { to: '/admin/offers', label: 'Offers' },
   { to: '/admin/contacts', label: 'Contact Submissions' },
+  { to: '/admin/settings', label: 'Settings' },
 ];
 
 export default function AdminDashboardLayout() {

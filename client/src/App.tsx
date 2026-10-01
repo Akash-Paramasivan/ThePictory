@@ -12,6 +12,7 @@ import CategoriesAdmin from './pages/admin/CategoriesAdmin';
 import MediaAdmin from './pages/admin/MediaAdmin';
 import OffersAdmin from './pages/admin/OffersAdmin';
 import ContactsAdmin from './pages/admin/ContactsAdmin';
+import SettingsAdmin from './pages/admin/SettingsAdmin';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="media" element={<MediaAdmin />} />
           <Route path="offers" element={<OffersAdmin />} />
           <Route path="contacts" element={<ContactsAdmin />} />
+          <Route path="settings" element={<SettingsAdmin />} />
         </Route>
       </Route>
     </Routes>

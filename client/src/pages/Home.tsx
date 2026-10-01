@@ -3,15 +3,19 @@ import { Link } from 'react-router-dom';
 import { getMedia, type MediaItem } from '../api/media';
 import { getActiveOffers, type Offer } from '../api/offers';
 import OfferCard from '../components/OfferCard';
+import { useSiteSettings } from '../context/SiteSettingsContext';
 
 export default function Home() {
   const [featured, setFeatured] = useState<MediaItem[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
+  const { offersPageEnabled } = useSiteSettings();
 
   useEffect(() => {
     getMedia({ featuredOnly: true }).then(setFeatured).catch(() => setFeatured([]));
-    getActiveOffers().then(setOffers).catch(() => setOffers([]));
-  }, []);
+    if (offersPageEnabled) {
+      getActiveOffers().then(setOffers).catch(() => setOffers([]));
+    }
+  }, [offersPageEnabled]);
 
   const heroImage = featured[0]?.cloudinaryUrl;
   const secondaryImage = featured[1]?.cloudinaryUrl ?? heroImage;
@@ -93,7 +97,7 @@ export default function Home() {
       )}
 
       {/* Offers */}
-      {offers.length > 0 && (
+      {offersPageEnabled && offers.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
           <h2 className="font-serif text-4xl text-center text-charcoal mb-10">Current Offers</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { getActiveOffers, type Offer } from '../api/offers';
 import OfferCard from '../components/OfferCard';
+import { useSiteSettings } from '../context/SiteSettingsContext';
 
 export default function Offers() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
+  const { offersPageEnabled, loaded } = useSiteSettings();
 
   useEffect(() => {
     getActiveOffers()
@@ -12,6 +15,10 @@ export default function Offers() {
       .catch(() => setOffers([]))
       .finally(() => setLoading(false));
   }, []);
+
+  if (loaded && !offersPageEnabled) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16">

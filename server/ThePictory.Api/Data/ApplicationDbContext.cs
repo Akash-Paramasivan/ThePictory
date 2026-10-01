@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<ContactSubmission> ContactSubmissions => Set<ContactSubmission>();
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
     public DbSet<AdminOtpCode> AdminOtpCodes => Set<AdminOtpCode>();
+    public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

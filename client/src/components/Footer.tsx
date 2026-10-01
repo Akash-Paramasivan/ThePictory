@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useSiteSettings } from '../context/SiteSettingsContext';
 
 export default function Footer() {
+  const { offersPageEnabled } = useSiteSettings();
   return (
     <footer className="border-t border-charcoal/10 bg-cream">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 flex flex-col items-center text-center gap-6">
@@ -11,9 +13,11 @@ export default function Footer() {
           <Link to="/portfolio" className="text-xs uppercase tracking-[0.15em] text-charcoal-soft hover:text-charcoal">
             Portfolio
           </Link>
-          <Link to="/offers" className="text-xs uppercase tracking-[0.15em] text-charcoal-soft hover:text-charcoal">
-            Offers
-          </Link>
+          {offersPageEnabled && (
+            <Link to="/offers" className="text-xs uppercase tracking-[0.15em] text-charcoal-soft hover:text-charcoal">
+              Offers
+            </Link>
+          )}
           <Link to="/contact" className="text-xs uppercase tracking-[0.15em] text-charcoal-soft hover:text-charcoal">
             Contact
           </Link>

@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-
-const links = [
-  { to: '/portfolio', label: 'Portfolio' },
-  { to: '/offers', label: 'Offers' },
-  { to: '/contact', label: 'Contact' },
-];
+import { useSiteSettings } from '../context/SiteSettingsContext';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { offersPageEnabled } = useSiteSettings();
+  const links = offersPageEnabled
+    ? [{ to: '/portfolio', label: 'Portfolio' }, { to: '/offers', label: 'Offers' }, { to: '/contact', label: 'Contact' }]
+    : [{ to: '/portfolio', label: 'Portfolio' }, { to: '/contact', label: 'Contact' }];
 
   return (
     <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-charcoal/10">
