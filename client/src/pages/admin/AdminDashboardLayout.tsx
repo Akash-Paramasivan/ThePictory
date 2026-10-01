@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import logo from '../../assets/logo.png';
 
 const links = [
   { to: '/admin', label: 'Overview', end: true },
@@ -22,7 +23,9 @@ export default function AdminDashboardLayout() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-cream-dark">
       <aside className="md:w-56 bg-white border-b md:border-b-0 md:border-r border-charcoal/10 md:min-h-screen">
-        <div className="p-4 font-serif text-xl text-charcoal">The Pictory</div>
+        <div className="p-4">
+          <img src={logo} alt="The Pictory" className="h-7 w-auto" />
+        </div>
         <nav className="flex md:flex-col gap-1 px-2 overflow-x-auto md:overflow-visible">
           {links.map((link) => (
             <NavLink

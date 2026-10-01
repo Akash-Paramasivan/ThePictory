@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useSiteSettings } from '../context/SiteSettingsContext';
+import logo from '../assets/logo.png';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -12,8 +13,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-charcoal/10">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 flex h-20 items-center justify-between">
-        <Link to="/" className="font-serif text-2xl tracking-wide text-charcoal" onClick={() => setOpen(false)}>
-          The Pictory
+        <Link to="/" onClick={() => setOpen(false)}>
+          <img src={logo} alt="The Pictory" className="h-8 sm:h-9 w-auto" />
         </Link>
 
         <nav className="hidden md:flex gap-10">

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { login, verifyOtp } from '../../api/auth';
 import { ApiError } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
+import logo from '../../assets/logo.png';
 
 export default function AdminLogin() {
   const { login: setAuthenticated } = useAuth();
@@ -48,7 +49,10 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream px-4">
       <div className="w-full max-w-sm bg-white border border-charcoal/10 p-8">
-        <h1 className="font-serif text-2xl text-charcoal mb-6">The Pictory &mdash; Admin</h1>
+        <div className="flex flex-col items-center mb-6">
+          <img src={logo} alt="The Pictory" className="h-8 w-auto mb-2" />
+          <p className="text-xs uppercase tracking-[0.15em] text-charcoal-soft">Admin</p>
+        </div>
 
         {step === 'credentials' ? (
           <form onSubmit={handleCredentials} className="space-y-4">
