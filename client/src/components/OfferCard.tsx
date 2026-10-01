@@ -5,7 +5,7 @@ export default function OfferCard({ offer }: { offer: Offer }) {
   const embedUrl = offer.mediaType === 'YouTube' && offer.youTubeUrl ? getYouTubeEmbedUrl(offer.youTubeUrl) : null;
 
   return (
-    <article className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-sm">
+    <article className="border border-charcoal/10 overflow-hidden bg-cream">
       {offer.mediaType === 'Image' && offer.imageUrl && (
         <img src={offer.imageUrl} alt={offer.title} className="w-full h-56 object-cover" loading="lazy" />
       )}
@@ -20,9 +20,9 @@ export default function OfferCard({ offer }: { offer: Offer }) {
           />
         </div>
       )}
-      <div className="p-4">
-        <h3 className="font-semibold text-lg">{offer.title}</h3>
-        {offer.description && <p className="text-neutral-600 text-sm mt-1">{offer.description}</p>}
+      <div className="p-5">
+        <h3 className="font-serif text-xl text-charcoal">{offer.title}</h3>
+        {offer.description && <p className="text-charcoal-soft text-sm mt-1">{offer.description}</p>}
       </div>
     </article>
   );

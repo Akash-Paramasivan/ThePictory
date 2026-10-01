@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 const links = [
-  { to: '/', label: 'Home' },
   { to: '/portfolio', label: 'Portfolio' },
   { to: '/offers', label: 'Offers' },
   { to: '/contact', label: 'Contact' },
@@ -12,19 +11,21 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral-200">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 flex h-16 items-center justify-between">
-        <Link to="/" className="text-lg font-semibold tracking-tight" onClick={() => setOpen(false)}>
+    <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-charcoal/10">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 flex h-20 items-center justify-between">
+        <Link to="/" className="font-serif text-2xl tracking-wide text-charcoal" onClick={() => setOpen(false)}>
           The Pictory
         </Link>
 
-        <nav className="hidden md:flex gap-8">
+        <nav className="hidden md:flex gap-10">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `text-sm font-medium transition-colors ${isActive ? 'text-neutral-900' : 'text-neutral-500 hover:text-neutral-900'}`
+                `text-xs uppercase tracking-[0.15em] transition-colors ${
+                  isActive ? 'text-charcoal' : 'text-charcoal-soft hover:text-charcoal'
+                }`
               }
             >
               {link.label}
@@ -34,7 +35,7 @@ export default function Navbar() {
 
         <button
           type="button"
-          className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md text-neutral-700"
+          className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md text-charcoal"
           aria-label="Toggle menu"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
@@ -49,14 +50,14 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <nav className="md:hidden border-t border-neutral-200 px-4 py-3 flex flex-col gap-3 bg-white">
+        <nav className="md:hidden border-t border-charcoal/10 px-4 py-4 flex flex-col gap-4 bg-cream">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
-                `text-base font-medium py-1 ${isActive ? 'text-neutral-900' : 'text-neutral-500'}`
+                `text-sm uppercase tracking-[0.15em] py-1 ${isActive ? 'text-charcoal' : 'text-charcoal-soft'}`
               }
             >
               {link.label}

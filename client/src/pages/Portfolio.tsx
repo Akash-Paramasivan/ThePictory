@@ -22,15 +22,15 @@ export default function Portfolio() {
   }, [selected]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12">
-      <h1 className="text-3xl font-semibold mb-6">Portfolio</h1>
+    <div className="py-16">
+      <h1 className="font-serif text-4xl sm:text-5xl text-center text-charcoal mb-10">Portfolio</h1>
 
-      <div className="flex flex-wrap gap-2 mb-8">
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-12 px-4">
         <button
           type="button"
           onClick={() => setSelected(null)}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium border ${
-            selected === null ? 'bg-neutral-900 text-white border-neutral-900' : 'border-neutral-300 text-neutral-700'
+          className={`text-xs uppercase tracking-[0.15em] pb-1 border-b ${
+            selected === null ? 'text-charcoal border-charcoal' : 'text-charcoal-soft border-transparent hover:text-charcoal'
           }`}
         >
           All
@@ -40,8 +40,8 @@ export default function Portfolio() {
             key={cat.id}
             type="button"
             onClick={() => setSelected(cat.id)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium border ${
-              selected === cat.id ? 'bg-neutral-900 text-white border-neutral-900' : 'border-neutral-300 text-neutral-700'
+            className={`text-xs uppercase tracking-[0.15em] pb-1 border-b ${
+              selected === cat.id ? 'text-charcoal border-charcoal' : 'text-charcoal-soft border-transparent hover:text-charcoal'
             }`}
           >
             {cat.name}
@@ -49,7 +49,7 @@ export default function Portfolio() {
         ))}
       </div>
 
-      {loading ? <p className="text-neutral-500">Loading...</p> : <Gallery items={items} />}
+      {loading ? <p className="text-center text-charcoal-soft">Loading...</p> : <Gallery items={items} />}
     </div>
   );
 }

@@ -5,24 +5,24 @@ export default function Gallery({ items }: { items: MediaItem[] }) {
   const [active, setActive] = useState<MediaItem | null>(null);
 
   if (items.length === 0) {
-    return <p className="text-neutral-500 text-center py-16">No photos in this category yet.</p>;
+    return <p className="text-charcoal-soft text-center py-16">No photos in this category yet.</p>;
   }
 
   return (
     <>
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 [&>*]:mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3">
         {items.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => setActive(item)}
-            className="block w-full break-inside-avoid overflow-hidden rounded-lg group focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
+            className="block w-full aspect-[4/5] overflow-hidden group focus:outline-none"
           >
             <img
               src={item.cloudinaryUrl}
               alt={item.title}
               loading="lazy"
-              className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           </button>
         ))}
@@ -30,7 +30,7 @@ export default function Gallery({ items }: { items: MediaItem[] }) {
 
       {active && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-charcoal/95 flex items-center justify-center p-4"
           onClick={() => setActive(null)}
         >
           <button

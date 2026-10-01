@@ -78,17 +78,19 @@ export default function Contact() {
   if (status === 'success') {
     return (
       <div className="mx-auto max-w-xl px-4 sm:px-6 py-20 text-center">
-        <div className="rounded-lg bg-green-50 border border-green-200 text-green-800 p-6">
-          Thanks! We've received your details and will reach out on WhatsApp shortly.
+        <div className="border border-blush-dark bg-blush text-charcoal p-8">
+          <p className="font-serif text-2xl mb-2">Thank you</p>
+          <p className="text-charcoal-soft">We've received your details and will reach out on WhatsApp shortly.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-xl px-4 sm:px-6 py-12 min-h-[70vh] flex flex-col">
-      <div className="h-1 w-full bg-neutral-100 rounded-full mb-12">
-        <div className="h-1 bg-neutral-900 rounded-full transition-all" style={{ width: `${progress}%` }} />
+    <div className="mx-auto max-w-xl px-4 sm:px-6 py-16 min-h-[70vh] flex flex-col">
+      <h1 className="font-serif text-3xl text-center text-charcoal mb-10">Let's Begin Your Journey</h1>
+      <div className="h-px w-full bg-charcoal/10 mb-12">
+        <div className="h-px bg-charcoal transition-all" style={{ width: `${progress}%` }} />
       </div>
 
       <div className="flex-1">
@@ -118,8 +120,8 @@ export default function Contact() {
         )}
         {step === 'fullName' && (
           <div>
-            <h2 className="text-2xl font-semibold mb-6">
-              Your Full Name <span className="text-neutral-400">*</span>
+            <h2 className="font-serif text-2xl text-charcoal mb-6">
+              Your Full Name <span className="text-charcoal-soft">*</span>
             </h2>
             <input
               autoFocus
@@ -128,20 +130,20 @@ export default function Contact() {
               onKeyDown={(e) => e.key === 'Enter' && goNext()}
               placeholder="Your answer here..."
               maxLength={150}
-              className="w-full border-b-2 border-neutral-300 focus:border-neutral-900 outline-none py-2 text-lg"
+              className="w-full border-b-2 border-charcoal/20 focus:border-charcoal outline-none py-2 text-lg bg-transparent"
             />
           </div>
         )}
         {step === 'whatsApp' && (
           <div>
-            <h2 className="text-2xl font-semibold mb-6">
-              Your WhatsApp number <span className="text-neutral-400">*</span>
+            <h2 className="font-serif text-2xl text-charcoal mb-6">
+              Your WhatsApp number <span className="text-charcoal-soft">*</span>
             </h2>
             <div className="flex gap-2 items-end">
               <select
                 value={form.whatsAppCountryCode}
                 onChange={(e) => setForm({ ...form, whatsAppCountryCode: e.target.value })}
-                className="border-b-2 border-neutral-300 outline-none py-2 text-lg bg-transparent"
+                className="border-b-2 border-charcoal/20 outline-none py-2 text-lg bg-transparent"
               >
                 {COUNTRY_CODES.map((c) => (
                   <option key={c.code} value={c.code}>
@@ -157,7 +159,7 @@ export default function Contact() {
                 onKeyDown={(e) => e.key === 'Enter' && goNext()}
                 placeholder="081234 56789"
                 maxLength={15}
-                className="flex-1 border-b-2 border-neutral-300 focus:border-neutral-900 outline-none py-2 text-lg"
+                className="flex-1 border-b-2 border-charcoal/20 focus:border-charcoal outline-none py-2 text-lg bg-transparent"
               />
             </div>
           </div>
@@ -171,7 +173,7 @@ export default function Contact() {
           <button
             type="button"
             onClick={goBack}
-            className="rounded-md border border-neutral-300 px-5 py-3 text-sm font-medium"
+            className="border border-charcoal/20 text-charcoal px-5 py-3 text-xs uppercase tracking-[0.15em] hover:bg-charcoal/5"
             aria-label="Back"
           >
             ←
@@ -181,9 +183,9 @@ export default function Contact() {
           type="button"
           onClick={goNext}
           disabled={!isStepValid() || status === 'submitting'}
-          className="flex-1 rounded-md bg-neutral-900 text-white py-3 text-sm font-semibold disabled:opacity-40"
+          className="flex-1 inline-flex items-center justify-center gap-2 bg-charcoal text-white py-3 text-xs uppercase tracking-[0.15em] disabled:opacity-40 hover:bg-charcoal/90 transition-colors"
         >
-          {status === 'submitting' ? 'Submitting...' : stepIndex === STEPS.length - 1 ? 'Submit' : 'Next'}
+          {status === 'submitting' ? 'Submitting...' : stepIndex === STEPS.length - 1 ? 'Submit' : 'Next'} <span aria-hidden>✳</span>
         </button>
       </div>
     </div>
@@ -203,8 +205,8 @@ function RadioStep({
 }) {
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">
-        {question} <span className="text-neutral-400">*</span>
+      <h2 className="font-serif text-2xl text-charcoal mb-6">
+        {question} <span className="text-charcoal-soft">*</span>
       </h2>
       <div className="space-y-3">
         {options.map((option) => (
@@ -212,10 +214,10 @@ function RadioStep({
             key={option}
             type="button"
             onClick={() => onChange(option)}
-            className={`w-full text-left rounded-lg border px-4 py-3 text-base font-medium transition-colors ${
+            className={`w-full text-left border px-4 py-3 text-base transition-colors ${
               value === option
-                ? 'border-neutral-900 bg-neutral-100'
-                : 'border-neutral-300 bg-neutral-50 hover:bg-neutral-100'
+                ? 'border-charcoal bg-blush text-charcoal'
+                : 'border-charcoal/20 bg-cream text-charcoal-soft hover:border-charcoal/40'
             }`}
           >
             {option}

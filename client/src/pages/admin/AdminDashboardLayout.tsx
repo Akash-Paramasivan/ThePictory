@@ -19,9 +19,9 @@ export default function AdminDashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-neutral-50">
-      <aside className="md:w-56 bg-white border-b md:border-b-0 md:border-r border-neutral-200 md:min-h-screen">
-        <div className="p-4 font-semibold">The Pictory Admin</div>
+    <div className="min-h-screen flex flex-col md:flex-row bg-cream-dark">
+      <aside className="md:w-56 bg-white border-b md:border-b-0 md:border-r border-charcoal/10 md:min-h-screen">
+        <div className="p-4 font-serif text-xl text-charcoal">The Pictory</div>
         <nav className="flex md:flex-col gap-1 px-2 overflow-x-auto md:overflow-visible">
           {links.map((link) => (
             <NavLink
@@ -29,8 +29,8 @@ export default function AdminDashboardLayout() {
               to={link.to}
               end={link.end}
               className={({ isActive }) =>
-                `whitespace-nowrap px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive ? 'bg-neutral-900 text-white' : 'text-neutral-600 hover:bg-neutral-100'
+                `whitespace-nowrap px-3 py-2 text-sm font-medium ${
+                  isActive ? 'bg-charcoal text-white' : 'text-charcoal-soft hover:bg-blush'
                 }`
               }
             >

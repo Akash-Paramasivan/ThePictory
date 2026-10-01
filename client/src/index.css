@@ -1,10 +1,23 @@
 @import "tailwindcss";
 
+@theme {
+  --font-serif: "Cormorant Garamond", "Georgia", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --color-cream: #faf7f2;
+  --color-cream-dark: #f1ebe2;
+  --color-blush: #e9ddd3;
+  --color-blush-dark: #d9c7b8;
+  --color-charcoal: #2b2722;
+  --color-charcoal-soft: #6b6359;
+}
+
 :root {
   color-scheme: light;
 }
 
 body {
   margin: 0;
-  @apply antialiased text-neutral-800 bg-white;
+  @apply antialiased text-charcoal bg-cream font-sans;
 }
+

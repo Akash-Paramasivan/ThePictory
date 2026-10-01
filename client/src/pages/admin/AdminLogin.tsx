@@ -46,9 +46,9 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4">
-      <div className="w-full max-w-sm bg-white border border-neutral-200 rounded-xl p-8 shadow-sm">
-        <h1 className="text-xl font-semibold mb-6">Admin Login</h1>
+    <div className="min-h-screen flex items-center justify-center bg-cream px-4">
+      <div className="w-full max-w-sm bg-white border border-charcoal/10 p-8">
+        <h1 className="font-serif text-2xl text-charcoal mb-6">The Pictory &mdash; Admin</h1>
 
         {step === 'credentials' ? (
           <form onSubmit={handleCredentials} className="space-y-4">
