@@ -18,3 +18,7 @@ Thumbs.db
 .vs/
 .vscode/*
 !.vscode/extensions.json
+
+# Local scratch/throwaway tooling (never committed)
+.scratch/
+
