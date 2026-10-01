@@ -5,7 +5,7 @@ Public photography portfolio site with a protected admin portal for managing por
 ## Stack
 - `client/` — React + TypeScript + Vite + Tailwind CSS (public site + admin portal, single SPA)
 - `server/ThePictory.Api/` — ASP.NET Core 9 Web API + EF Core + PostgreSQL
-- Images: Cloudinary. Videos: YouTube embeds only. Email: SMTP (Brevo/SendGrid recommended) for admin OTP + contact notifications.
+- Images: Cloudinary. Videos: YouTube embeds only. Email: Brevo HTTPS transactional email API (not SMTP — many PaaS hosts block/throttle outbound SMTP ports) for admin OTP + contact notifications.
 
 ## Prerequisites
 - .NET 9 SDK
@@ -29,10 +29,7 @@ dotnet user-secrets set "Jwt:Secret" "<a long random string>"
 dotnet user-secrets set "InitialAdmin:Username" "admin"
 dotnet user-secrets set "InitialAdmin:Email" "you@example.com"
 dotnet user-secrets set "InitialAdmin:Password" "<a strong password>"
-dotnet user-secrets set "Email:SmtpHost" "smtp-relay.brevo.com"
-dotnet user-secrets set "Email:SmtpPort" "587"
-dotnet user-secrets set "Email:SmtpUser" "<smtp username>"
-dotnet user-secrets set "Email:SmtpPassword" "<smtp password>"
+dotnet user-secrets set "Email:ApiKey" "<brevo api key, from Settings > SMTP & API > API Keys tab>"
 dotnet user-secrets set "Email:FromAddress" "no-reply@yourdomain.com"
 dotnet user-secrets set "Email:AdminNotificationAddress" "you@example.com"
 dotnet user-secrets set "Cloudinary:CloudName" "<cloud name>"
@@ -57,7 +54,7 @@ npm run dev
 Public site: http://localhost:5173. Admin portal: http://localhost:5173/admin/login.
 
 ## Notes
-- The admin OTP code and contact form notifications require valid SMTP credentials; without them, login/contact requests will fail at the email-send step (this is expected until configured).
+- The admin OTP code and contact form notifications require a valid Brevo API key; without it, login/contact requests will fail at the email-send step (this is expected until configured). Brevo's HTTPS API is used instead of SMTP because platforms like Render's free tier block/throttle outbound SMTP ports.
 - File uploads are restricted to JPEG/PNG/WEBP, max 10 MB, validated both client- and server-side.
 - Rate limiting is applied to `/api/auth/*` and `/api/contact` to reduce brute-force/spam risk.
 
