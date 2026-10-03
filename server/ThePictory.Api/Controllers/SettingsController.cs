@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ThePictory.Api.Data;
 using ThePictory.Api.Dtos;
 using ThePictory.Api.Models;
+using ThePictory.Api.Services;
 
 namespace ThePictory.Api.Controllers;
 
@@ -21,17 +22,23 @@ public class SettingsController : ControllerBase
     public async Task<ActionResult<SiteSettingDto>> Get(CancellationToken ct)
     {
         var settings = await GetOrCreateSettingsAsync(ct);
-        return Ok(new SiteSettingDto(settings.OffersPageEnabled));
+        return Ok(new SiteSettingDto(settings.OffersPageEnabled, settings.HomepageVideoUrl));
     }
 
     [Authorize]
     [HttpPut]
     public async Task<ActionResult<SiteSettingDto>> Update(UpdateSiteSettingRequest request, CancellationToken ct)
     {
+        if (!string.IsNullOrWhiteSpace(request.HomepageVideoUrl) && !YouTubeUrlValidator.IsValid(request.HomepageVideoUrl))
+        {
+            return BadRequest(new { message = "A valid YouTube URL is required." });
+        }
+
         var settings = await GetOrCreateSettingsAsync(ct);
         settings.OffersPageEnabled = request.OffersPageEnabled;
+        settings.HomepageVideoUrl = string.IsNullOrWhiteSpace(request.HomepageVideoUrl) ? null : request.HomepageVideoUrl;
         await _db.SaveChangesAsync(ct);
-        return Ok(new SiteSettingDto(settings.OffersPageEnabled));
+        return Ok(new SiteSettingDto(settings.OffersPageEnabled, settings.HomepageVideoUrl));
     }
 
     private async Task<SiteSetting> GetOrCreateSettingsAsync(CancellationToken ct)

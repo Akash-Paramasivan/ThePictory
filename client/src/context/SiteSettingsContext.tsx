@@ -3,18 +3,27 @@ import { getSiteSettings } from '../api/settings';
 
 interface SiteSettingsContextValue {
   offersPageEnabled: boolean;
+  homepageVideoUrl: string | null;
   loaded: boolean;
 }
 
-const SiteSettingsContext = createContext<SiteSettingsContextValue>({ offersPageEnabled: false, loaded: false });
+const SiteSettingsContext = createContext<SiteSettingsContextValue>({
+  offersPageEnabled: false,
+  homepageVideoUrl: null,
+  loaded: false,
+});
 
 export function SiteSettingsProvider({ children }: { children: ReactNode }) {
-  const [value, setValue] = useState<SiteSettingsContextValue>({ offersPageEnabled: false, loaded: false });
+  const [value, setValue] = useState<SiteSettingsContextValue>({
+    offersPageEnabled: false,
+    homepageVideoUrl: null,
+    loaded: false,
+  });
 
   useEffect(() => {
     getSiteSettings()
-      .then((s) => setValue({ offersPageEnabled: s.offersPageEnabled, loaded: true }))
-      .catch(() => setValue({ offersPageEnabled: false, loaded: true }));
+      .then((s) => setValue({ offersPageEnabled: s.offersPageEnabled, homepageVideoUrl: s.homepageVideoUrl, loaded: true }))
+      .catch(() => setValue({ offersPageEnabled: false, homepageVideoUrl: null, loaded: true }));
   }, []);
 
   return <SiteSettingsContext.Provider value={value}>{children}</SiteSettingsContext.Provider>;

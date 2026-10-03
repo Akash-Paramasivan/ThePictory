@@ -4,11 +4,12 @@ import { getMedia, type MediaItem } from '../api/media';
 import { getActiveOffers, type Offer } from '../api/offers';
 import OfferCard from '../components/OfferCard';
 import { useSiteSettings } from '../context/SiteSettingsContext';
+import { getYouTubeBackgroundEmbedUrl } from '../lib/youtube';
 
 export default function Home() {
   const [featured, setFeatured] = useState<MediaItem[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
-  const { offersPageEnabled } = useSiteSettings();
+  const { offersPageEnabled, homepageVideoUrl } = useSiteSettings();
 
   useEffect(() => {
     getMedia({ featuredOnly: true }).then(setFeatured).catch(() => setFeatured([]));
@@ -19,6 +20,7 @@ export default function Home() {
 
   const heroImage = featured[0]?.cloudinaryUrl;
   const secondaryImage = featured[1]?.cloudinaryUrl ?? heroImage;
+  const videoEmbedUrl = homepageVideoUrl ? getYouTubeBackgroundEmbedUrl(homepageVideoUrl) : null;
 
   return (
     <div>
@@ -77,6 +79,19 @@ export default function Home() {
           {secondaryImage && <img src={secondaryImage} alt="" className="w-full h-full object-cover" />}
         </div>
       </section>
+
+      {/* Showcase video */}
+      {videoEmbedUrl && (
+        <section className="relative w-full aspect-video max-h-[85vh] overflow-hidden bg-charcoal">
+          <iframe
+            src={videoEmbedUrl}
+            title="The Pictory showcase video"
+            className="absolute inset-0 w-full h-full pointer-events-none scale-[1.4] sm:scale-100"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
+        </section>
+      )}
 
       {/* Latest work filmstrip */}
       {featured.length > 0 && (

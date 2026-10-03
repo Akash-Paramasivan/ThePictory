@@ -5,4 +5,5 @@ public class SiteSetting
 {
     public int Id { get; set; }
     public bool OffersPageEnabled { get; set; }
+    public string? HomepageVideoUrl { get; set; }
 }

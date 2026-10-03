@@ -2,16 +2,17 @@ import { apiFetch } from './client';
 
 export interface SiteSetting {
   offersPageEnabled: boolean;
+  homepageVideoUrl: string | null;
 }
 
 export function getSiteSettings() {
   return apiFetch<SiteSetting>('/api/settings');
 }
 
-export function updateSiteSettings(offersPageEnabled: boolean) {
+export function updateSiteSettings(offersPageEnabled: boolean, homepageVideoUrl: string | null) {
   return apiFetch<SiteSetting>('/api/settings', {
     method: 'PUT',
     auth: true,
-    body: JSON.stringify({ offersPageEnabled }),
+    body: JSON.stringify({ offersPageEnabled, homepageVideoUrl }),
   });
 }

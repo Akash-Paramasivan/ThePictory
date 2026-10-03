@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,7 @@ namespace ThePictory.Api.Controllers;
 
 [ApiController]
 [Route("api/offers")]
-public partial class OffersController : ControllerBase
+public class OffersController : ControllerBase
 {
     private static readonly HashSet<string> AllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -27,9 +26,6 @@ public partial class OffersController : ControllerBase
         _db = db;
         _cloudinaryService = cloudinaryService;
     }
-
-    [GeneratedRegex(@"^https:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{6,20}(&\S*)?$", RegexOptions.IgnoreCase)]
-    private static partial Regex YouTubeUrlPattern();
 
     private static OfferDto ToDto(Offer o) => new(
         o.Id, o.Title, o.Description, o.MediaType, o.ImageUrl, o.YouTubeUrl, o.IsActive, o.StartDate, o.EndDate);
@@ -80,7 +76,7 @@ public partial class OffersController : ControllerBase
 
         if (mediaType == OfferMediaType.YouTube)
         {
-            if (string.IsNullOrWhiteSpace(youTubeUrl) || !YouTubeUrlPattern().IsMatch(youTubeUrl))
+            if (string.IsNullOrWhiteSpace(youTubeUrl) || !YouTubeUrlValidator.IsValid(youTubeUrl))
             {
                 return BadRequest(new { message = "A valid YouTube URL is required." });
             }
