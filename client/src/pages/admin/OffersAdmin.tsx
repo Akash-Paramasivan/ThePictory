@@ -113,6 +113,9 @@ export default function OffersAdmin() {
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               className="w-full text-sm"
             />
+            {file && (
+              <img src={URL.createObjectURL(file)} alt="Preview" className="w-32 h-32 object-cover rounded-md mt-3 border border-neutral-200" />
+            )}
           </div>
         )}
         {error && <p className="text-red-600 text-sm sm:col-span-2">{error}</p>}
