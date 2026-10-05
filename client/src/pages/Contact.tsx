@@ -39,14 +39,12 @@ export default function Contact() {
   const step = STEPS[stepIndex];
   const progress = ((stepIndex + 1) / STEPS.length) * 100;
 
-  // Auto-advance from the radio steps needs the *latest* form state, not the
-  // closure captured when the option was clicked. Keep a ref in sync so the
-  // deferred advance always validates against current values.
+  // Keep a ref in sync so deferred advances (radio auto-next) always see
+  // the latest form values instead of a stale closure.
   const formRef = useRef(form);
-  useEffect(() => {
-    formRef.current = form;
-  }, [form]);
+  useEffect(() => { formRef.current = form; }, [form]);
 
+  // Stateless validation that reads current form — avoids stale closures.
   const isStepValid = (f: FormState = formRef.current): boolean => {
     switch (step) {
       case 'eventType':
@@ -60,7 +58,7 @@ export default function Contact() {
       case 'whatsApp': {
         const digits = f.whatsAppNumber.trim().replace(/\D/g, '');
         const isIndian = f.whatsAppCountryCode === '+91';
-        // Valid mobile: exactly 10 digits for India (9XXXXXXXXX), 10-15 for others
+        // Allow 10-digit Indian mobile numbers (6-9 start) and 10-15 for others
         if (isIndian) return /^[6-9]\d{9}$/.test(digits);
         return digits.length >= 10 && digits.length <= 15;
       }
@@ -69,7 +67,8 @@ export default function Contact() {
   };
 
   const goNext = async () => {
-    if (!isStepValid()) return;
+    const currentForm = formRef.current;
+    if (!isStepValid(currentForm)) return;
     if (stepIndex < STEPS.length - 1) {
       setStepIndex((i) => i + 1);
       return;
@@ -77,7 +76,7 @@ export default function Contact() {
     setStatus('submitting');
     setError(null);
     try {
-      await submitContactForm(form);
+      await submitContactForm(currentForm);
       setStatus('success');
       // Hand off to WhatsApp with the enquiry pre-filled.
       const message = [
