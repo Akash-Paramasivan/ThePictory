@@ -16,6 +16,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
     public DbSet<AdminOtpCode> AdminOtpCodes => Set<AdminOtpCode>();
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
+    public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
+    public DbSet<Movie> Movies => Set<Movie>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

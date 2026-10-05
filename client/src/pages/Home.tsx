@@ -33,7 +33,6 @@ export default function Home() {
     }
   }, [offersPageEnabled]);
 
-  const heroImage = heroImages[0]?.cloudinaryUrl ?? featured[0]?.cloudinaryUrl;
   const videoEmbedUrl = homepageVideoUrl ? getYouTubeBackgroundEmbedUrl(homepageVideoUrl) : null;
   const [slideIndex, setSlideIndex] = useState(0);
   const thumbStripRef = useRef<HTMLDivElement>(null);
@@ -64,29 +63,16 @@ export default function Home() {
 
   return (
     <div className="bg-white">
-      {/* Hero — full-bleed image with minimalist overlay */}
-      <section className="relative h-screen min-h-[600px] flex items-center justify-center">
-        {heroImage ? (
-          <img src={heroImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        ) : (
-          <div className="absolute inset-0 w-full h-full bg-stone-200" />
-        )}
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="relative z-10 mx-auto max-w-4xl w-full px-4 text-center">
-          <h1 className="font-serif text-5xl sm:text-7xl leading-[1.1] text-white tracking-wide">
-            Capturing Love In Every Frame
-          </h1>
-          <p className="mt-6 text-lg sm:text-xl text-white/90 font-light tracking-wider">
-            RAW, REAL, AND DEEPLY ROOTED.
-          </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-6">
-            <Link
-              to="/portfolio"
-              className="inline-flex items-center gap-2 border border-white text-white px-8 py-3 text-sm tracking-[0.2em] hover:bg-white hover:text-black transition-all"
-            >
-              EXPLORE PORTFOLIO
-            </Link>
-          </div>
+      {/* Hero — full-bleed gallery layout */}
+      <section className="relative bg-stone-900 text-white py-24 px-6 text-center">
+        <h2 className="font-serif text-6xl sm:text-8xl tracking-tight mb-6">WHEN SOULS MAKE LOVE</h2>
+        <p className="text-stone-300 font-light tracking-widest text-sm sm:text-base mb-16">we craft pictures and movies that reflect your love — raw, real, and deeply rooted.</p>
+
+        {/* 3-row gallery images */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto">
+          {heroImages.slice(0, 3).map((img, i) => (
+            <img key={i} src={img.cloudinaryUrl} alt="" className="w-full h-96 object-cover" />
+          ))}
         </div>
       </section>
 

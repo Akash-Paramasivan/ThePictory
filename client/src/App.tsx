@@ -11,6 +11,7 @@ import AdminOverview from './pages/admin/AdminOverview';
 import CategoriesAdmin from './pages/admin/CategoriesAdmin';
 import MediaAdmin from './pages/admin/MediaAdmin';
 import OffersAdmin from './pages/admin/OffersAdmin';
+import BlogAdmin from './pages/admin/BlogAdmin';
 import ContactsAdmin from './pages/admin/ContactsAdmin';
 import SettingsAdmin from './pages/admin/SettingsAdmin';
 
@@ -32,6 +33,7 @@ function App() {
           <Route path="categories" element={<CategoriesAdmin />} />
           <Route path="media" element={<MediaAdmin />} />
           <Route path="offers" element={<OffersAdmin />} />
+          <Route path="blog" element={<BlogAdmin />} />
           <Route path="contacts" element={<ContactsAdmin />} />
           <Route path="settings" element={<SettingsAdmin />} />
         </Route>
