@@ -8,7 +8,6 @@ import { useSiteSettings } from '../context/SiteSettingsContext';
 import { getYouTubeBackgroundEmbedUrl } from '../lib/youtube';
 
 export default function Home() {
-  const [featured, setFeatured] = useState<MediaItem[]>([]);
   const [heroImages, setHeroImages] = useState<MediaItem[]>([]);
   const [slides, setSlides] = useState<MediaItem[]>([]);
   const [testimonials, setTestimonials] = useState<MediaItem[]>([]);
@@ -16,7 +15,7 @@ export default function Home() {
   const { offersPageEnabled, homepageVideoUrl } = useSiteSettings();
 
   useEffect(() => {
-    getMedia({ featuredOnly: true }).then(setFeatured).catch(() => setFeatured([]));
+    getMedia({ featuredOnly: true }).then((all) => setHeroImages(all)).catch(() => setHeroImages([]));
     getMedia()
       .then((all) => {
         setHeroImages(all.filter((m) => m.isHero));
@@ -150,16 +149,16 @@ export default function Home() {
         </section>
       )}
 
-      {/* Showcase video */}
+      {/* Showcase video — chromeless YouTube background */}
       {videoEmbedUrl && (
         <section className="relative w-full aspect-video max-h-[85vh] overflow-hidden bg-charcoal">
           <iframe
             src={videoEmbedUrl}
-            title="The Pictory showcase video"
-            className="absolute inset-0 w-full h-full"
+            title="Showcase"
             allow="autoplay; encrypted-media; fullscreen"
             allowFullScreen
-            style={{ border: 'none' }}
+            className="absolute inset-0 w-full h-full"
+            style={{ border: 'none', opacity: 0.95 }}
           />
         </section>
       )}
