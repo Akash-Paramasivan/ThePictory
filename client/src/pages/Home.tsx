@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMedia, type MediaItem } from '../api/media';
 import { getActiveOffers, type Offer } from '../api/offers';
@@ -36,6 +36,7 @@ export default function Home() {
   const secondaryImage = heroImages[1]?.cloudinaryUrl ?? featured[1]?.cloudinaryUrl ?? heroImage;
   const videoEmbedUrl = homepageVideoUrl ? getYouTubeBackgroundEmbedUrl(homepageVideoUrl) : null;
   const [slideIndex, setSlideIndex] = useState(0);
+  const thumbStripRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setSlideIndex(0);
@@ -50,9 +51,16 @@ export default function Home() {
     }
   }, [slides.length]);
 
+  useEffect(() => {
+    const activeThumb = thumbStripRef.current?.children[slideIndex] as HTMLElement | undefined;
+    activeThumb?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, [slideIndex]);
+
+  const goTo = (index: number) => setSlideIndex((index + slides.length) % slides.length);
+
   return (
     <div>
-      {/* Hero */}
+      {/* Hero — full-bleed image from hero-flagged photos */}
       <section className="relative h-[80vh] min-h-[480px] flex items-end">
         {heroImage ? (
           <img src={heroImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
@@ -108,6 +116,62 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Portfolio gallery — slide-flagged photos, slideshow with thumbnail scroller */}
+      {slides.length > 0 && (
+        <section className="py-20">
+          <h2 className="font-serif text-4xl text-center text-charcoal mb-10">Portfolio</h2>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-lg shadow-lg bg-charcoal">
+              {slides.map((item, index) => (
+                <img
+                  key={item.id}
+                  src={item.cloudinaryUrl}
+                  alt={item.title}
+                  loading="lazy"
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                    index === slideIndex ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+              ))}
+              <button
+                type="button"
+                onClick={() => goTo(slideIndex - 1)}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-charcoal/60 text-white hover:bg-charcoal transition-colors"
+                aria-label="Previous image"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={() => goTo(slideIndex + 1)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-charcoal/60 text-white hover:bg-charcoal transition-colors"
+                aria-label="Next image"
+              >
+                ›
+              </button>
+            </div>
+            <div
+              ref={thumbStripRef}
+              className="flex gap-3 overflow-x-auto pb-4 pt-4 snap-x snap-mandatory"
+            >
+              {slides.map((item, index) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setSlideIndex(index)}
+                  aria-label={`Show ${item.title}`}
+                  className={`snap-start flex-shrink-0 w-32 sm:w-40 aspect-[4/3] overflow-hidden rounded-md transition-opacity duration-300 ${
+                    index === slideIndex ? 'opacity-100 ring-2 ring-charcoal' : 'opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  <img src={item.cloudinaryUrl} alt={item.title} loading="lazy" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Showcase video */}
       {videoEmbedUrl && (
         <section className="relative w-full aspect-video max-h-[85vh] overflow-hidden bg-charcoal">
@@ -122,49 +186,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* Latest work filmstrip */}
-      {featured.length > 0 && (
-        <section className="py-20">
-          <h2 className="font-serif text-4xl text-center text-charcoal mb-10">Latest Work</h2>
-          <div className="flex gap-3 overflow-x-auto px-4 sm:px-6 pb-4 snap-x snap-mandatory">
-            {featured.map((item) => (
-              <img
-                key={item.id}
-                src={item.cloudinaryUrl}
-                alt={item.title}
-                loading="lazy"
-                className="h-72 sm:h-96 w-auto flex-shrink-0 object-cover snap-start"
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Portfolio Gallery (slideshow/carousel) — uses slide images only */}
-      {slides.length > 0 && (
-        <section className="py-20">
-          <h2 className="font-serif text-4xl text-center text-charcoal mb-10">Portfolio</h2>
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-lg shadow-lg bg-charcoal">
-              {slides.map((item, index) => (
-                <img
-                  key={item.id}
-                  src={item.cloudinaryUrl}
-                  alt={item.title}
-                  loading="lazy"
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${index === slideIndex ? 'opacity-100' : 'opacity-0'}`}
-                />
-              ))}
-              <button onClick={() => setSlideIndex((i) => (i - 1 + slides.length) % slides.length)} className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-charcoal/60 text-white hover:bg-charcoal" aria-label="Previous">‹</button>
-              <button onClick={() => setSlideIndex((i) => (i + 1) % slides.length)} className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-charcoal/60 text-white hover:bg-charcoal" aria-label="Next">›</button>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Video section */}
-
-      {/* Testimonials (Kind Words) — testimonial images only */}
+      {/* Kind Words — testimonial-flagged photos with quotes */}
       {testimonials.length > 0 && (
         <section className="bg-cream py-20 px-4 sm:px-6">
           <h2 className="font-serif text-4xl text-center text-charcoal mb-12">Kind Words</h2>
@@ -186,6 +208,7 @@ export default function Home() {
           </div>
         </section>
       )}
+
       {/* Offers */}
       {offersPageEnabled && offers.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
