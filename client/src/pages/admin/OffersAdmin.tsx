@@ -65,10 +65,10 @@ export default function OffersAdmin() {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-6">Offers</h1>
+    <div className="bg-stone-50 min-h-screen p-8">
+      <h1 className="font-serif text-3xl text-stone-900 mb-8">Offers</h1>
 
-      <form onSubmit={handleCreate} className="grid gap-3 sm:grid-cols-2 mb-8 bg-white p-4 rounded-lg border border-neutral-200">
+      <form onSubmit={handleCreate} className="grid gap-3 sm:grid-cols-2 mb-8 bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
         <div>
           <label className="block text-sm font-medium mb-1">Title</label>
           <input required value={title} onChange={(e) => setTitle(e.target.value)} className="w-full rounded-md border border-neutral-300 px-3 py-2" />

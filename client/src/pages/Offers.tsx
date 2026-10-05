@@ -21,19 +21,25 @@ export default function Offers() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
-      <h1 className="font-serif text-4xl sm:text-5xl text-center text-charcoal mb-10">Offers</h1>
-      {loading ? (
-        <p className="text-center text-charcoal-soft">Loading...</p>
-      ) : offers.length === 0 ? (
-        <p className="text-center text-charcoal-soft">No current offers, check back soon!</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {offers.map((offer) => (
-            <OfferCard key={offer.id} offer={offer} />
-          ))}
-        </div>
-      )}
+    <div className="min-h-screen bg-white">
+      <section className="py-20 px-6 text-center bg-stone-50">
+        <h1 className="font-serif text-5xl sm:text-7xl text-stone-900 tracking-tight mb-4">Offers</h1>
+        <p className="text-stone-500 font-light tracking-wider">LIMITED TIME ONLY — INQUIRE TODAY.</p>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-16">
+        {loading ? (
+          <p className="text-center text-stone-400 font-light">Loading...</p>
+        ) : offers.length === 0 ? (
+          <p className="text-center text-stone-400 font-light">No current offers, check back soon!</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {offers.map((offer) => (
+              <OfferCard key={offer.id} offer={offer} />
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

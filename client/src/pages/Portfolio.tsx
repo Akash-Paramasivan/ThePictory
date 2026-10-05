@@ -22,34 +22,43 @@ export default function Portfolio() {
   }, [selected]);
 
   return (
-    <div className="py-16">
-      <h1 className="font-serif text-4xl sm:text-5xl text-center text-charcoal mb-10">Portfolio</h1>
+    <div className="min-h-screen bg-white">
+      <section className="py-20 px-6 text-center bg-stone-50">
+        <h1 className="font-serif text-5xl sm:text-7xl text-stone-900 tracking-tight mb-4">Portfolio</h1>
+        <p className="text-stone-500 font-light tracking-wider">RAW, REAL, AND DEEPLY ROOTED.</p>
+      </section>
 
-      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-12 px-4">
-        <button
-          type="button"
-          onClick={() => setSelected(null)}
-          className={`text-xs uppercase tracking-[0.15em] pb-1 border-b ${
-            selected === null ? 'text-charcoal border-charcoal' : 'text-charcoal-soft border-transparent hover:text-charcoal'
-          }`}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
+      <section className="mx-auto max-w-7xl px-6 py-16">
+        <div className="flex flex-wrap justify-center gap-8 mb-16">
           <button
-            key={cat.id}
             type="button"
-            onClick={() => setSelected(cat.id)}
-            className={`text-xs uppercase tracking-[0.15em] pb-1 border-b ${
-              selected === cat.id ? 'text-charcoal border-charcoal' : 'text-charcoal-soft border-transparent hover:text-charcoal'
+            onClick={() => setSelected(null)}
+            className={`text-sm tracking-[0.15em] uppercase font-light transition-colors pb-1 border-b ${
+              selected === null ? 'border-stone-900 text-stone-900' : 'border-transparent text-stone-400 hover:text-stone-600'
             }`}
           >
-            {cat.name}
+            All
           </button>
-        ))}
-      </div>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setSelected(cat.id)}
+              className={`text-sm tracking-[0.15em] uppercase font-light transition-colors pb-1 border-b ${
+                selected === cat.id ? 'border-stone-900 text-stone-900' : 'border-transparent text-stone-400 hover:text-stone-600'
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
 
-      {loading ? <p className="text-center text-charcoal-soft">Loading...</p> : <Gallery items={items} />}
+        {loading ? (
+          <p className="text-center text-stone-400 font-light">Loading...</p>
+        ) : (
+          <Gallery items={items} />
+        )}
+      </section>
     </div>
   );
 }
