@@ -8,22 +8,32 @@ import { getYouTubeBackgroundEmbedUrl } from '../lib/youtube';
 
 export default function Home() {
   const [featured, setFeatured] = useState<MediaItem[]>([]);
+  const [heroImages, setHeroImages] = useState<MediaItem[]>([]);
   const [slides, setSlides] = useState<MediaItem[]>([]);
+  const [testimonials, setTestimonials] = useState<MediaItem[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
   const { offersPageEnabled, homepageVideoUrl } = useSiteSettings();
 
   useEffect(() => {
     getMedia({ featuredOnly: true }).then(setFeatured).catch(() => setFeatured([]));
     getMedia()
-      .then((all) => setSlides(all.filter((m) => m.isSlide).sort((a, b) => (a.slideOrder || 0) - (b.slideOrder || 0))))
-      .catch(() => setSlides([]));
+      .then((all) => {
+        setHeroImages(all.filter((m) => m.isHero));
+        setSlides(all.filter((m) => m.isSlide).sort((a, b) => (a.slideOrder || 0) - (b.slideOrder || 0)));
+        setTestimonials(all.filter((m) => m.isTestimonial));
+      })
+      .catch(() => {
+        setHeroImages([]);
+        setSlides([]);
+        setTestimonials([]);
+      });
     if (offersPageEnabled) {
       getActiveOffers().then(setOffers).catch(() => setOffers([]));
     }
   }, [offersPageEnabled]);
 
-  const heroImage = featured[0]?.cloudinaryUrl;
-  const secondaryImage = featured[1]?.cloudinaryUrl ?? heroImage;
+  const heroImage = heroImages[0]?.cloudinaryUrl ?? featured[0]?.cloudinaryUrl;
+  const secondaryImage = heroImages[1]?.cloudinaryUrl ?? featured[1]?.cloudinaryUrl ?? heroImage;
   const videoEmbedUrl = homepageVideoUrl ? getYouTubeBackgroundEmbedUrl(homepageVideoUrl) : null;
   const [slideIndex, setSlideIndex] = useState(0);
 
@@ -130,52 +140,52 @@ export default function Home() {
         </section>
       )}
 
-      {/* Slideshow */}
-      {slides.length > 1 && (
-        <section className="relative py-20">
-          <h2 className="font-serif text-4xl text-center text-charcoal mb-10">Showcase</h2>
-          <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-lg shadow-lg">
+      {/* Portfolio Gallery (slideshow/carousel) — uses slide images only */}
+      {slides.length > 0 && (
+        <section className="py-20">
+          <h2 className="font-serif text-4xl text-center text-charcoal mb-10">Portfolio</h2>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-lg shadow-lg bg-charcoal">
               {slides.map((item, index) => (
                 <img
                   key={item.id}
                   src={item.cloudinaryUrl}
                   alt={item.title}
                   loading="lazy"
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                    index === slideIndex ? 'opacity-100' : 'opacity-0'
-                  }`}
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${index === slideIndex ? 'opacity-100' : 'opacity-0'}`}
                 />
               ))}
-              {/* Controls */}
-              <button
-                type="button"
-                onClick={() => setSlideIndex((i) => (i - 1 + slides.length) % slides.length)}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-charcoal/50 text-white hover:bg-charcoal/70 transition-colors"
-                aria-label="Previous image"
-              >
-                ‹
-              </button>
-              <button
-                type="button"
-                onClick={() => setSlideIndex((i) => (i + 1) % slides.length)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-charcoal/50 text-white hover:bg-charcoal/70 transition-colors"
-                aria-label="Next image"
-              >
-                ›
-              </button>
-              {/* Progress bar */}
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-white/30">
-                <div
-                  className="h-full bg-white transition-all ease-linear"
-                  style={{ width: `${((slideIndex + 1) / slides.length) * 100}%` }}
-                />
-              </div>
+              <button onClick={() => setSlideIndex((i) => (i - 1 + slides.length) % slides.length)} className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-charcoal/60 text-white hover:bg-charcoal" aria-label="Previous">‹</button>
+              <button onClick={() => setSlideIndex((i) => (i + 1) % slides.length)} className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-charcoal/60 text-white hover:bg-charcoal" aria-label="Next">›</button>
             </div>
           </div>
         </section>
       )}
 
+      {/* Video section */}
+
+      {/* Testimonials (Kind Words) — testimonial images only */}
+      {testimonials.length > 0 && (
+        <section className="bg-cream py-20 px-4 sm:px-6">
+          <h2 className="font-serif text-4xl text-center text-charcoal mb-12">Kind Words</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            {testimonials.map((item) => (
+              <figure key={item.id} className="text-center">
+                <img
+                  src={item.cloudinaryUrl}
+                  alt={item.title}
+                  loading="lazy"
+                  className="w-full aspect-[4/5] object-cover mb-4"
+                />
+                <blockquote className="text-sm text-charcoal-soft leading-relaxed mb-3">
+                  {item.description ?? item.title}
+                </blockquote>
+                <figcaption className="text-xs uppercase tracking-[0.15em] text-charcoal">{item.title}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
       {/* Offers */}
       {offersPageEnabled && offers.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 sm:px-6 py-16">

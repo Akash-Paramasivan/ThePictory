@@ -13,5 +13,7 @@ public class MediaItem
     public bool IsFeatured { get; set; }
     public bool IsSlide { get; set; }
     public int SlideOrder { get; set; }
+    public bool IsHero { get; set; }
+    public bool IsTestimonial { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

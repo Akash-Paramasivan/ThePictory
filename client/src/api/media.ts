@@ -11,6 +11,8 @@ export interface MediaItem {
   isFeatured: boolean;
   isSlide: boolean;
   slideOrder: number;
+  isHero: boolean;
+  isTestimonial: boolean;
   createdAt: string;
 }
 
@@ -32,7 +34,17 @@ export function uploadMedia(form: FormData) {
 
 export function updateMedia(
   id: number,
-  data: { categoryId: number; title: string; description?: string; sortOrder: number; isFeatured: boolean; isSlide?: boolean; slideOrder?: number },
+  data: {
+    categoryId: number;
+    title: string;
+    description?: string;
+    sortOrder: number;
+    isFeatured: boolean;
+    isSlide?: boolean;
+    slideOrder?: number;
+    isHero?: boolean;
+    isTestimonial?: boolean;
+  },
 ) {
   return apiFetch<void>(`/api/media/${id}`, {
     method: 'PUT',

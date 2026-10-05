@@ -11,6 +11,8 @@ public record MediaItemDto(
     bool IsFeatured,
     bool IsSlide,
     int SlideOrder,
+    bool IsHero,
+    bool IsTestimonial,
     DateTime CreatedAt);
 
-public record UpdateMediaItemRequest(int CategoryId, string Title, string? Description, int SortOrder, bool IsFeatured, bool IsSlide, int SlideOrder);
+public record UpdateMediaItemRequest(int CategoryId, string Title, string? Description, int SortOrder, bool IsFeatured, bool IsSlide, int SlideOrder, bool IsHero, bool IsTestimonial);

@@ -52,6 +52,8 @@ export default function MediaAdmin() {
       isFeatured: !item.isFeatured,
       isSlide: item.isSlide,
       slideOrder: item.slideOrder,
+      isHero: item.isHero,
+      isTestimonial: item.isTestimonial,
     });
     await load();
   };
@@ -66,6 +68,38 @@ export default function MediaAdmin() {
       isFeatured: item.isFeatured,
       isSlide: nextSlide,
       slideOrder: nextSlide ? (item.slideOrder || 1) : 0,
+      isHero: item.isHero,
+      isTestimonial: item.isTestimonial,
+    });
+    await load();
+  };
+
+  const toggleHero = async (item: MediaItem) => {
+    await updateMedia(item.id, {
+      categoryId: item.categoryId,
+      title: item.title,
+      description: item.description ?? undefined,
+      sortOrder: item.sortOrder,
+      isFeatured: item.isFeatured,
+      isSlide: item.isSlide,
+      slideOrder: item.slideOrder,
+      isHero: !item.isHero,
+      isTestimonial: item.isTestimonial,
+    });
+    await load();
+  };
+
+  const toggleTestimonial = async (item: MediaItem) => {
+    await updateMedia(item.id, {
+      categoryId: item.categoryId,
+      title: item.title,
+      description: item.description ?? undefined,
+      sortOrder: item.sortOrder,
+      isFeatured: item.isFeatured,
+      isSlide: item.isSlide,
+      slideOrder: item.slideOrder,
+      isHero: item.isHero,
+      isTestimonial: !item.isTestimonial,
     });
     await load();
   };
@@ -141,7 +175,13 @@ export default function MediaAdmin() {
                   {item.isFeatured ? 'Unfeature' : 'Feature'}
                 </button>
                 <button type="button" onClick={() => toggleSlide(item)} className="text-xs text-neutral-600 hover:underline">
-                  {item.isSlide ? 'Remove from slideshow' : 'Add to slideshow'}
+                  {item.isSlide ? 'Remove slide' : 'Slide'}
+                </button>
+                <button type="button" onClick={() => toggleHero(item)} className="text-xs text-neutral-600 hover:underline">
+                  {item.isHero ? 'Unhero' : 'Hero'}
+                </button>
+                <button type="button" onClick={() => toggleTestimonial(item)} className="text-xs text-neutral-600 hover:underline">
+                  {item.isTestimonial ? 'Remove testimonial' : 'Testimonial'}
                 </button>
                 <button type="button" onClick={() => handleDelete(item.id)} className="text-xs text-red-600 hover:underline">
                   Delete

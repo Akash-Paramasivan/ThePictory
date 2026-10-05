@@ -16,7 +16,7 @@ export default function Portfolio() {
   useEffect(() => {
     setLoading(true);
     getMedia(selected ? { categoryId: selected } : undefined)
-      .then(setItems)
+      .then((all) => setItems(all.filter((m) => !m.isHero && !m.isSlide && !m.isTestimonial)))
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
   }, [selected]);
