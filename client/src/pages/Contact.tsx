@@ -135,6 +135,7 @@ export default function Contact() {
             options={EVENT_TYPES}
             value={form.eventType}
             onChange={(v) => setForm({ ...form, eventType: v })}
+            onSelect={() => setTimeout(goNext, 200)}
           />
         )}
         {step === 'photographyDays' && (
@@ -143,6 +144,7 @@ export default function Contact() {
             options={DAYS_OPTIONS}
             value={form.photographyDays}
             onChange={(v) => setForm({ ...form, photographyDays: v })}
+            onSelect={() => setTimeout(goNext, 200)}
           />
         )}
         {step === 'budget' && (
@@ -151,6 +153,7 @@ export default function Contact() {
             options={BUDGET_OPTIONS}
             value={form.budget}
             onChange={(v) => setForm({ ...form, budget: v })}
+            onSelect={() => setTimeout(goNext, 200)}
           />
         )}
         {step === 'fullName' && (
@@ -207,6 +210,15 @@ export default function Contact() {
                     goNext();
                   }
                 }}
+                onBlur={() => {
+                  const digits = form.whatsAppNumber.trim();
+                  if (digits.length > 0) {
+                    const isIndian = form.whatsAppCountryCode === '+91';
+                    const valid = isIndian ? /^[6-9]\d{9}$/.test(digits) : (digits.length >= 10 && digits.length <= 15);
+                    if (!valid) setError('Please enter a valid mobile number');
+                    else setError(null);
+                  }
+                }}
                 placeholder="081234 56789"
                 maxLength={15}
                 className="flex-1 border-b-2 border-charcoal/20 focus:border-charcoal outline-none py-2 text-lg bg-transparent"
@@ -257,11 +269,13 @@ function RadioStep({
   options,
   value,
   onChange,
+  onSelect,
 }: {
   question: string;
   options: string[];
   value: string;
   onChange: (value: string) => void;
+  onSelect: () => void;
 }) {
   return (
     <div>
@@ -273,7 +287,10 @@ function RadioStep({
           <button
             key={option}
             type="button"
-            onClick={() => onChange(option)}
+            onClick={() => {
+              onChange(option);
+              onSelect();
+            }}
             className={`w-full text-left border px-4 py-3 text-base transition-colors ${
               value === option
                 ? 'border-charcoal bg-blush text-charcoal'
