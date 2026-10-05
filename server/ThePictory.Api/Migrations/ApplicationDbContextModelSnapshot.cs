@@ -184,6 +184,12 @@ namespace ThePictory.Api.Migrations
                     b.Property<bool>("IsFeatured")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsSlide")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SlideOrder")
+                        .HasColumnType("integer");
+
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
