@@ -5,6 +5,8 @@ import { ApiError } from '../../api/client';
 export default function SettingsAdmin() {
   const [offersPageEnabled, setOffersPageEnabled] = useState(false);
   const [homepageVideoUrl, setHomepageVideoUrl] = useState('');
+  const [footerEmail, setFooterEmail] = useState('');
+  const [footerPhone, setFooterPhone] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
