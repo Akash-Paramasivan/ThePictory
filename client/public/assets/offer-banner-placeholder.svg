@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e3dd"/>
+      <stop offset="1" stop-color="#ecd4e0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg)"/>
+  <circle cx="1040" cy="90" r="200" fill="#ffffff" opacity="0.35"/>
+  <circle cx="140" cy="520" r="160" fill="#ffffff" opacity="0.25"/>
+  <path d="M560 250 l10 -24 10 24 24 10 -24 10 -10 24 -10 -24 -24 -10 24 -10z" fill="#b3425c" opacity="0.9"/>
+  <text x="600" y="270" text-anchor="middle" font-family="Georgia, serif" font-size="68" font-weight="bold" fill="#2d2d2d">Don't Miss This</text>
+  <text x="600" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="68" font-weight="bold" fill="#b3425c">Exciting Offer!</text>
+  <text x="600" y="430" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="30" fill="#5a5a5a">Limited time only — inquire today</text>
+  <rect x="465" y="470" width="270" height="54" rx="27" fill="#2d2d2d"/>
+  <text x="600" y="505" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#ffffff" letter-spacing="3">GRAB NOW</text>
+</svg>

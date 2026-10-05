@@ -81,6 +81,7 @@ export default function Contact() {
         `Budget: ${form.budget}`,
         `WhatsApp: ${form.whatsAppCountryCode} ${form.whatsAppNumber.trim()}`,
       ].join('\n');
+      try { sessionStorage.setItem('offer-banner', 'pending'); } catch {}
       window.location.href = `https://wa.me/916380630219?text=${encodeURIComponent(message)}`;
     } catch (err) {
       setStatus('error');
