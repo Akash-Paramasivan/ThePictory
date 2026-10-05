@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getMedia, type MediaItem } from '../api/media';
 import { getActiveOffers, type Offer } from '../api/offers';
 import OfferCard from '../components/OfferCard';
+import OfferBanner from '../components/OfferBanner';
 import { useSiteSettings } from '../context/SiteSettingsContext';
 import { getYouTubeBackgroundEmbedUrl } from '../lib/youtube';
 
@@ -33,13 +34,16 @@ export default function Home() {
   }, [offersPageEnabled]);
 
   const heroImage = heroImages[0]?.cloudinaryUrl ?? featured[0]?.cloudinaryUrl;
-  const secondaryImage = heroImages[1]?.cloudinaryUrl ?? featured[1]?.cloudinaryUrl ?? heroImage;
   const videoEmbedUrl = homepageVideoUrl ? getYouTubeBackgroundEmbedUrl(homepageVideoUrl) : null;
   const [slideIndex, setSlideIndex] = useState(0);
   const thumbStripRef = useRef<HTMLDivElement>(null);
 
+  const slideLengthRef = useRef(slides.length);
   useEffect(() => {
-    setSlideIndex(0);
+    if (slides.length !== slideLengthRef.current) {
+      slideLengthRef.current = slides.length;
+      setSlideIndex(0);
+    }
   }, [slides.length]);
 
   useEffect(() => {
@@ -59,62 +63,50 @@ export default function Home() {
   const goTo = (index: number) => setSlideIndex((index + slides.length) % slides.length);
 
   return (
-    <div>
-      {/* Hero — full-bleed image from hero-flagged photos */}
-      <section className="relative h-[80vh] min-h-[480px] flex items-end">
+    <div className="bg-white">
+      {/* Hero — full-bleed image with minimalist overlay */}
+      <section className="relative h-screen min-h-[600px] flex items-center justify-center">
         {heroImage ? (
           <img src={heroImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
         ) : (
-          <div className="absolute inset-0 w-full h-full bg-blush" />
+          <div className="absolute inset-0 w-full h-full bg-stone-200" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 via-transparent to-transparent" />
-        <div className="relative z-10 mx-auto max-w-6xl w-full px-4 sm:px-6 pb-16">
-          <h1 className="font-serif text-5xl sm:text-7xl leading-[1.05] text-white max-w-2xl">
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative z-10 mx-auto max-w-4xl w-full px-4 text-center">
+          <h1 className="font-serif text-5xl sm:text-7xl leading-[1.1] text-white tracking-wide">
             Capturing Love In Every Frame
           </h1>
-          <p className="mt-5 text-base sm:text-lg text-white/90 max-w-xl">
-            Timeless photography & films for weddings, portraits, and every story worth telling.
+          <p className="mt-6 text-lg sm:text-xl text-white/90 font-light tracking-wider">
+            RAW, REAL, AND DEEPLY ROOTED.
           </p>
-          <div className="mt-8 flex flex-wrap gap-4">
+          <div className="mt-10 flex flex-wrap justify-center gap-6">
             <Link
               to="/portfolio"
-              className="inline-flex items-center gap-2 border border-white text-white px-6 py-3 text-xs uppercase tracking-[0.15em] hover:bg-white hover:text-charcoal transition-colors"
+              className="inline-flex items-center gap-2 border border-white text-white px-8 py-3 text-sm tracking-[0.2em] hover:bg-white hover:text-black transition-all"
             >
-              Explore Portfolio <span aria-hidden>✳</span>
-            </Link>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 bg-white text-charcoal px-6 py-3 text-xs uppercase tracking-[0.15em] hover:bg-cream transition-colors"
-            >
-              Inquire Now <span aria-hidden>✳</span>
+              EXPLORE PORTFOLIO
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Brand statement */}
-      <section className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
-        <div className="flex flex-col justify-center px-6 sm:px-16 py-16 bg-cream">
-          <h2 className="font-serif text-4xl sm:text-5xl text-charcoal mb-6">Relive Every Emotion</h2>
-          <p className="text-charcoal-soft leading-relaxed mb-4">
+      {/* Brand statement - Minimalist contrast */}
+      <section className="py-24 px-6 bg-stone-50 text-center">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="font-serif text-4xl sm:text-5xl text-stone-900 mb-8">Relive Every Emotion</h2>
+          <p className="text-stone-600 leading-loose mb-6 font-light">
             Every celebration has its own rhythm, its own people, and its own story. Our role is simply to preserve
-            it as it unfolds &mdash; the fleeting moments, genuine emotions, and little details you'll treasure most.
+            it as it unfolds — the fleeting moments, genuine emotions, and little details you'll treasure most.
           </p>
-          <p className="text-charcoal-soft leading-relaxed mb-8">
+          <p className="text-stone-600 leading-loose font-light">
             We create photographs that feel honest, timeless, and true to you, so years from now, you won't just
             remember the day. You'll remember how it felt.
           </p>
-          <Link
-            to="/portfolio"
-            className="inline-flex items-center gap-2 border border-charcoal text-charcoal px-6 py-3 text-xs uppercase tracking-[0.15em] hover:bg-charcoal hover:text-white transition-colors w-fit"
-          >
-            Explore Portfolio <span aria-hidden>✳</span>
-          </Link>
-        </div>
-        <div className="min-h-[320px] bg-blush">
-          {secondaryImage && <img src={secondaryImage} alt="" className="w-full h-full object-cover" />}
         </div>
       </section>
+
+      {/* Offer Banner Demo (if active) */}
+      <OfferBanner />
 
       {/* Portfolio gallery — slide-flagged photos, slideshow with thumbnail scroller */}
       {slides.length > 0 && (

@@ -11,31 +11,31 @@ export default function Navbar() {
     : [{ to: '/portfolio', label: 'Portfolio' }, { to: '/contact', label: 'Contact' }];
 
   return (
-    <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-charcoal/10">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 flex h-20 items-center justify-between">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-stone-200">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8 flex h-24 items-center justify-between">
         <Link to="/" onClick={() => setOpen(false)}>
-          <img src={logo} alt="The Pictory" className="h-8 sm:h-9 w-auto" />
+          <img src={logo} alt="The Pictory" className="h-6 sm:h-7 w-auto" />
         </Link>
 
-        <nav className="hidden md:flex gap-10">
+        <nav className="hidden md:flex gap-12">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `text-xs uppercase tracking-[0.15em] transition-colors ${
-                  isActive ? 'text-charcoal' : 'text-charcoal-soft hover:text-charcoal'
+                `text-sm font-light tracking-[0.2em] transition-colors ${
+                  isActive ? 'text-stone-900 border-b border-stone-900' : 'text-stone-500 hover:text-stone-900'
                 }`
               }
             >
-              {link.label}
+              {link.label.toUpperCase()}
             </NavLink>
           ))}
         </nav>
 
         <button
           type="button"
-          className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md text-charcoal"
+          className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-md text-stone-900"
           aria-label="Toggle menu"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
@@ -50,14 +50,14 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <nav className="md:hidden border-t border-charcoal/10 px-4 py-4 flex flex-col gap-4 bg-cream">
+        <nav className="md:hidden border-t border-stone-200 px-6 py-8 flex flex-col gap-6 bg-white">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
-                `text-sm uppercase tracking-[0.15em] py-1 ${isActive ? 'text-charcoal' : 'text-charcoal-soft'}`
+                `text-sm font-light tracking-[0.2em] uppercase ${isActive ? 'text-stone-900' : 'text-stone-500'}`
               }
             >
               {link.label}
