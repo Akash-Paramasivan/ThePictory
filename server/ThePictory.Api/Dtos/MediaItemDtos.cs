@@ -9,6 +9,8 @@ public record MediaItemDto(
     string CloudinaryUrl,
     int SortOrder,
     bool IsFeatured,
+    bool IsSlide,
+    int SlideOrder,
     DateTime CreatedAt);
 
-public record UpdateMediaItemRequest(int CategoryId, string Title, string? Description, int SortOrder, bool IsFeatured);
+public record UpdateMediaItemRequest(int CategoryId, string Title, string? Description, int SortOrder, bool IsFeatured, bool IsSlide, int SlideOrder);

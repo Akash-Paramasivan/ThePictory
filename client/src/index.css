@@ -21,3 +21,12 @@ body {
   @apply antialiased text-charcoal bg-cream font-sans;
 }
 
+@keyframes slide-progress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+

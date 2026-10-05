@@ -36,7 +36,7 @@ public class MediaController : ControllerBase
 
         var items = await query
             .OrderBy(m => m.SortOrder)
-            .Select(m => new MediaItemDto(m.Id, m.CategoryId, m.Category!.Name, m.Title, m.Description, m.CloudinaryUrl, m.SortOrder, m.IsFeatured, m.CreatedAt))
+            .Select(m => new MediaItemDto(m.Id, m.CategoryId, m.Category!.Name, m.Title, m.Description, m.CloudinaryUrl, m.SortOrder, m.IsFeatured, m.IsSlide, m.SlideOrder, m.CreatedAt))
             .ToListAsync(ct);
 
         return Ok(items);
@@ -77,12 +77,14 @@ public class MediaController : ControllerBase
             Description = description?.Trim(),
             CloudinaryUrl = url,
             CloudinaryPublicId = publicId,
-            SortOrder = maxSort + 1
+            SortOrder = maxSort + 1,
+            IsSlide = false,
+            SlideOrder = 0
         };
         _db.MediaItems.Add(mediaItem);
         await _db.SaveChangesAsync(ct);
 
-        return CreatedAtAction(nameof(GetAll), new MediaItemDto(mediaItem.Id, mediaItem.CategoryId, null, mediaItem.Title, mediaItem.Description, mediaItem.CloudinaryUrl, mediaItem.SortOrder, mediaItem.IsFeatured, mediaItem.CreatedAt));
+        return CreatedAtAction(nameof(GetAll), new MediaItemDto(mediaItem.Id, mediaItem.CategoryId, null, mediaItem.Title, mediaItem.Description, mediaItem.CloudinaryUrl, mediaItem.SortOrder, mediaItem.IsFeatured, mediaItem.IsSlide, mediaItem.SlideOrder, mediaItem.CreatedAt));
     }
 
     [Authorize]
@@ -97,6 +99,8 @@ public class MediaController : ControllerBase
         item.Description = request.Description?.Trim();
         item.SortOrder = request.SortOrder;
         item.IsFeatured = request.IsFeatured;
+        item.IsSlide = request.IsSlide;
+        item.SlideOrder = request.SlideOrder;
         await _db.SaveChangesAsync(ct);
         return NoContent();
     }

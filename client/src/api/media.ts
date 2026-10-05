@@ -9,6 +9,8 @@ export interface MediaItem {
   cloudinaryUrl: string;
   sortOrder: number;
   isFeatured: boolean;
+  isSlide: boolean;
+  slideOrder: number;
   createdAt: string;
 }
 
@@ -30,7 +32,7 @@ export function uploadMedia(form: FormData) {
 
 export function updateMedia(
   id: number,
-  data: { categoryId: number; title: string; description?: string; sortOrder: number; isFeatured: boolean },
+  data: { categoryId: number; title: string; description?: string; sortOrder: number; isFeatured: boolean; isSlide?: boolean; slideOrder?: number },
 ) {
   return apiFetch<void>(`/api/media/${id}`, {
     method: 'PUT',

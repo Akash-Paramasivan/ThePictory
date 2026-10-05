@@ -50,6 +50,22 @@ export default function MediaAdmin() {
       description: item.description ?? undefined,
       sortOrder: item.sortOrder,
       isFeatured: !item.isFeatured,
+      isSlide: item.isSlide,
+      slideOrder: item.slideOrder,
+    });
+    await load();
+  };
+
+  const toggleSlide = async (item: MediaItem) => {
+    const nextSlide = !item.isSlide;
+    await updateMedia(item.id, {
+      categoryId: item.categoryId,
+      title: item.title,
+      description: item.description ?? undefined,
+      sortOrder: item.sortOrder,
+      isFeatured: item.isFeatured,
+      isSlide: nextSlide,
+      slideOrder: nextSlide ? (item.slideOrder || 1) : 0,
     });
     await load();
   };
@@ -120,9 +136,12 @@ export default function MediaAdmin() {
             <div className="p-2 text-sm">
               <p className="font-medium truncate">{item.title}</p>
               <p className="text-neutral-400 text-xs">{item.categoryName}</p>
-              <div className="flex justify-between items-center mt-2">
+              <div className="flex justify-between items-center mt-2 gap-2">
                 <button type="button" onClick={() => toggleFeatured(item)} className="text-xs text-neutral-600 hover:underline">
                   {item.isFeatured ? 'Unfeature' : 'Feature'}
+                </button>
+                <button type="button" onClick={() => toggleSlide(item)} className="text-xs text-neutral-600 hover:underline">
+                  {item.isSlide ? 'Remove from slideshow' : 'Add to slideshow'}
                 </button>
                 <button type="button" onClick={() => handleDelete(item.id)} className="text-xs text-red-600 hover:underline">
                   Delete

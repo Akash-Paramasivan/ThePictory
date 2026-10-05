@@ -11,5 +11,7 @@ public class MediaItem
     public string CloudinaryPublicId { get; set; } = string.Empty;
     public int SortOrder { get; set; }
     public bool IsFeatured { get; set; }
+    public bool IsSlide { get; set; }
+    public int SlideOrder { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
