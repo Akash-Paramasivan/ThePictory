@@ -11,8 +11,13 @@ export default function ContactsAdmin() {
   }, []);
 
   const handleMarkRead = async (id: number) => {
-    await markContactRead(id);
-    await load();
+    try {
+      await markContactRead(id);
+      await load();
+    } catch (err) {
+      alert('Failed to mark as read — check console.');
+      console.error(err);
+    }
   };
 
   return (

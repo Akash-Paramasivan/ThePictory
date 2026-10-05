@@ -65,7 +65,7 @@ public class ContactController : ControllerBase
     }
 
     [Authorize]
-    [HttpPatch("{id:int}/read")]
+    [HttpPut("{id:int}/read")]
     public async Task<IActionResult> MarkRead(int id, CancellationToken ct)
     {
         var submission = await _db.ContactSubmissions.FindAsync([id], ct);

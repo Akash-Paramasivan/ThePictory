@@ -7,6 +7,8 @@ const links = [
   { to: '/admin/categories', label: 'Categories' },
   { to: '/admin/media', label: 'Media' },
   { to: '/admin/offers', label: 'Offers' },
+  { to: '/admin/blog', label: 'Blog' },
+  { to: '/admin/movies', label: 'Movies' },
   { to: '/admin/contacts', label: 'Contact Submissions' },
   { to: '/admin/settings', label: 'Settings' },
 ];

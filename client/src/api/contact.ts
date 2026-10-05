@@ -31,5 +31,5 @@ export function getContactSubmissions() {
 }
 
 export function markContactRead(id: number) {
-  return apiFetch<void>(`/api/contact/${id}/read`, { method: 'PATCH', auth: true });
+  return apiFetch<void>(`/api/contact/${id}/read`, { method: 'PUT', auth: true });
 }

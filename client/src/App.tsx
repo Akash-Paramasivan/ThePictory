@@ -36,6 +36,7 @@ function App() {
           <Route path="offers" element={<OffersAdmin />} />
           <Route path="blog" element={<BlogAdmin />} />
           <Route path="movies" element={<MovieAdmin />} />
+          <Route path="movies" element={<MovieAdmin />} />
           <Route path="contacts" element={<ContactsAdmin />} />
           <Route path="settings" element={<SettingsAdmin />} />
         </Route>
