@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { submitContactForm } from '../api/contact';
 import { ApiError } from '../api/client';
 
@@ -39,19 +39,27 @@ export default function Contact() {
   const step = STEPS[stepIndex];
   const progress = ((stepIndex + 1) / STEPS.length) * 100;
 
-  const isStepValid = (): boolean => {
+  // Auto-advance from the radio steps needs the *latest* form state, not the
+  // closure captured when the option was clicked. Keep a ref in sync so the
+  // deferred advance always validates against current values.
+  const formRef = useRef(form);
+  useEffect(() => {
+    formRef.current = form;
+  }, [form]);
+
+  const isStepValid = (f: FormState = formRef.current): boolean => {
     switch (step) {
       case 'eventType':
-        return form.eventType !== '';
+        return f.eventType !== '';
       case 'photographyDays':
-        return form.photographyDays !== '';
+        return f.photographyDays !== '';
       case 'budget':
-        return form.budget !== '';
+        return f.budget !== '';
       case 'fullName':
-        return form.fullName.trim().length > 0;
+        return f.fullName.trim().length > 0;
       case 'whatsApp': {
-        const digits = form.whatsAppNumber.trim().replace(/\D/g, '');
-        const isIndian = form.whatsAppCountryCode === '+91';
+        const digits = f.whatsAppNumber.trim().replace(/\D/g, '');
+        const isIndian = f.whatsAppCountryCode === '+91';
         // Valid mobile: exactly 10 digits for India (9XXXXXXXXX), 10-15 for others
         if (isIndian) return /^[6-9]\d{9}$/.test(digits);
         return digits.length >= 10 && digits.length <= 15;

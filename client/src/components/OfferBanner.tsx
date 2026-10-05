@@ -19,7 +19,12 @@ export default function OfferBanner() {
   useEffect(() => {
     if (!offersPageEnabled) return;
     // Only show when the user was just redirected back from WhatsApp.
-    if (sessionStorage.getItem('offer-banner') !== 'pending') return;
+    // For testing/demos: allow ?showBanner=1 to preview without WhatsApp redirect.
+    const url = new URL(window.location.href);
+    const forceShow = url.searchParams.get('showBanner') === '1';
+    if (!forceShow) {
+      if (sessionStorage.getItem('offer-banner') !== 'pending') return;
+    }
     // Show only once per browser until an admin publishes a new offer.
     if (localStorage.getItem(STORAGE_KEY) === 'shown') return;
 
