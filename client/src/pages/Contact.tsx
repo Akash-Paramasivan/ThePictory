@@ -49,9 +49,15 @@ export default function Contact() {
         return form.budget !== '';
       case 'fullName':
         return form.fullName.trim().length > 0;
-      case 'whatsApp':
-        return /^\d{6,15}$/.test(form.whatsAppNumber.trim());
+      case 'whatsApp': {
+        const digits = form.whatsAppNumber.trim().replace(/\D/g, '');
+        const isIndian = form.whatsAppCountryCode === '+91';
+        // Valid mobile: exactly 10 digits for India (9XXXXXXXXX), 10-15 for others
+        if (isIndian) return /^[6-9]\d{9}$/.test(digits);
+        return digits.length >= 10 && digits.length <= 15;
+      }
     }
+    return false;
   };
 
   const goNext = async () => {
@@ -65,6 +71,17 @@ export default function Contact() {
     try {
       await submitContactForm(form);
       setStatus('success');
+      // Hand off to WhatsApp with the enquiry pre-filled.
+      const message = [
+        'New Enquiry from The Pictory',
+        '',
+        `Name: ${form.fullName.trim()}`,
+        `Event: ${form.eventType}`,
+        `Days of photography: ${form.photographyDays}`,
+        `Budget: ${form.budget}`,
+        `WhatsApp: ${form.whatsAppCountryCode} ${form.whatsAppNumber.trim()}`,
+      ].join('\n');
+      window.location.href = `https://wa.me/916380630219?text=${encodeURIComponent(message)}`;
     } catch (err) {
       setStatus('error');
       setError(err instanceof ApiError ? err.message : 'Something went wrong, please try again.');
@@ -76,12 +93,30 @@ export default function Contact() {
   };
 
   if (status === 'success') {
+    const message = `New Enquiry\nName: ${form.fullName}\nEvent: ${form.eventType}\nDays: ${form.photographyDays}\nBudget: ${form.budget}\nWhatsApp: ${form.whatsAppCountryCode} ${form.whatsAppNumber}`;
+    const waUrl = `https://wa.me/916380630219?text=${encodeURIComponent(message)}`;
     return (
       <div className="mx-auto max-w-xl px-4 sm:px-6 py-20 text-center">
-        <div className="border border-blush-dark bg-blush text-charcoal p-8">
+        <div className="border border-blush-dark bg-blush text-charcoal p-8 mb-6">
           <p className="font-serif text-2xl mb-2">Thank you</p>
-          <p className="text-charcoal-soft">We've received your details and will reach out on WhatsApp shortly.</p>
+          <p className="text-charcoal-soft">We've received your details. Redirecting to WhatsApp now.</p>
         </div>
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 text-xs uppercase tracking-[0.15em] hover:bg-green-700 transition-colors rounded-md"
+        >
+          Open WhatsApp <span aria-hidden>✳</span>
+        </a>
+        <p className="text-xs text-charcoal-soft mt-4">If it doesn't open automatically, click the button above.</p>
+        <button
+          type="button"
+          onClick={() => { window.location.href = waUrl; }}
+          className="text-xs text-charcoal-soft underline hover:text-charcoal mt-2"
+        >
+          Click here if not redirected
+        </button>
       </div>
     );
   }
@@ -155,13 +190,38 @@ export default function Contact() {
                 autoFocus
                 inputMode="numeric"
                 value={form.whatsAppNumber}
-                onChange={(e) => setForm({ ...form, whatsAppNumber: e.target.value.replace(/\D/g, '') })}
-                onKeyDown={(e) => e.key === 'Enter' && goNext()}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, '');
+                  setForm({ ...form, whatsAppNumber: digits });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const digits = form.whatsAppNumber.trim();
+                    const isIndian = form.whatsAppCountryCode === '+91';
+                    const valid = isIndian ? /^[6-9]\d{9}$/.test(digits) : (digits.length >= 10 && digits.length <= 15);
+                    if (!valid) {
+                      setError('Please enter a valid mobile number');
+                      return;
+                    }
+                    goNext();
+                  }
+                }}
                 placeholder="081234 56789"
                 maxLength={15}
                 className="flex-1 border-b-2 border-charcoal/20 focus:border-charcoal outline-none py-2 text-lg bg-transparent"
               />
             </div>
+            {!isStepValid() && form.whatsAppNumber.length > 0 && (
+              <p className="mt-3 text-sm text-charcoal-soft">
+                {form.whatsAppCountryCode === '+91'
+                  ? 'Enter a valid 10-digit Indian mobile number (starts with 6-9)'
+                  : 'Enter a valid mobile number (10-15 digits)'}
+              </p>
+            )}
+            {isStepValid() && form.whatsAppNumber.length > 0 && (
+              <p className="mt-3 text-sm text-green-700">Looks good ✓</p>
+            )}
           </div>
         )}
 
