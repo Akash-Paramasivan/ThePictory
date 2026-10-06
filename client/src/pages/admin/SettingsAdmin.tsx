@@ -7,8 +7,6 @@ export default function SettingsAdmin() {
   const [homepageVideoUrl, setHomepageVideoUrl] = useState('');
   const [instagramUrl, setInstagramUrl] = useState('');
   const [youtubeProfileUrl, setYoutubeProfileUrl] = useState('');
-  const [footerEmail, setFooterEmail] = useState('');
-  const [footerPhone, setFooterPhone] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
