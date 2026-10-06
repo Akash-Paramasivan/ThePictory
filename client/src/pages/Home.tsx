@@ -149,7 +149,9 @@ export default function Home() {
         </section>
       )}
 
-      {/* Showcase video — chromeless YouTube background */}
+      {/* Showcase video — chromeless YouTube embed.
+          youtube-nocookie.com hides the YouTube branding frame from casual view,
+          and controls=0 keeps the player chrome off so only the video shows. */}
       {videoEmbedUrl && (
         <section className="relative w-full aspect-video max-h-[85vh] overflow-hidden bg-charcoal">
           <iframe

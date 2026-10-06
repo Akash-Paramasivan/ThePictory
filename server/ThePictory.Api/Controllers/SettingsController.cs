@@ -22,7 +22,7 @@ public class SettingsController : ControllerBase
     public async Task<ActionResult<SiteSettingDto>> Get(CancellationToken ct)
     {
         var settings = await GetOrCreateSettingsAsync(ct);
-        return Ok(new SiteSettingDto(settings.OffersPageEnabled, settings.HomepageVideoUrl));
+        return Ok(new SiteSettingDto(settings.OffersPageEnabled, settings.HomepageVideoUrl, settings.InstagramUrl, settings.YoutubeProfileUrl));
     }
 
     [Authorize]
@@ -37,8 +37,10 @@ public class SettingsController : ControllerBase
         var settings = await GetOrCreateSettingsAsync(ct);
         settings.OffersPageEnabled = request.OffersPageEnabled;
         settings.HomepageVideoUrl = string.IsNullOrWhiteSpace(request.HomepageVideoUrl) ? null : request.HomepageVideoUrl;
+        settings.InstagramUrl = string.IsNullOrWhiteSpace(request.InstagramUrl) ? null : request.InstagramUrl;
+        settings.YoutubeProfileUrl = string.IsNullOrWhiteSpace(request.YoutubeProfileUrl) ? null : request.YoutubeProfileUrl;
         await _db.SaveChangesAsync(ct);
-        return Ok(new SiteSettingDto(settings.OffersPageEnabled, settings.HomepageVideoUrl));
+        return Ok(new SiteSettingDto(settings.OffersPageEnabled, settings.HomepageVideoUrl, settings.InstagramUrl, settings.YoutubeProfileUrl));
     }
 
     private async Task<SiteSetting> GetOrCreateSettingsAsync(CancellationToken ct)

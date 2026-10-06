@@ -6,4 +6,6 @@ public class SiteSetting
     public int Id { get; set; }
     public bool OffersPageEnabled { get; set; }
     public string? HomepageVideoUrl { get; set; }
+    public string? InstagramUrl { get; set; }
+    public string? YoutubeProfileUrl { get; set; }
 }

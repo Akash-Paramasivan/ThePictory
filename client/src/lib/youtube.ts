@@ -16,5 +16,5 @@ export function getYouTubeEmbedUrl(url: string): string | null {
 export function getYouTubeBackgroundEmbedUrl(url: string): string | null {
   const id = extractYouTubeId(url);
   if (!id) return null;
-  return `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&disablekb=1&fs=0&iv_load_policy=3&modestbranding=1&rel=0&showinfo=0`;
+  return `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&disablekb=1&fs=0&iv_load_policy=3&modestbranding=1&rel=0&showinfo=0&playsinline=1&origin=${window.location.origin}`;
 }

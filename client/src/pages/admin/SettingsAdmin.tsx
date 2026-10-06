@@ -5,6 +5,8 @@ import { ApiError } from '../../api/client';
 export default function SettingsAdmin() {
   const [offersPageEnabled, setOffersPageEnabled] = useState(false);
   const [homepageVideoUrl, setHomepageVideoUrl] = useState('');
+  const [instagramUrl, setInstagramUrl] = useState('');
+  const [youtubeProfileUrl, setYoutubeProfileUrl] = useState('');
   const [footerEmail, setFooterEmail] = useState('');
   const [footerPhone, setFooterPhone] = useState('');
   const [loading, setLoading] = useState(true);
@@ -16,6 +18,8 @@ export default function SettingsAdmin() {
       .then((s) => {
         setOffersPageEnabled(s.offersPageEnabled);
         setHomepageVideoUrl(s.homepageVideoUrl ?? '');
+        setInstagramUrl(s.instagramUrl ?? '');
+        setYoutubeProfileUrl(s.youtubeProfileUrl ?? '');
       })
       .finally(() => setLoading(false));
   }, []);
@@ -24,7 +28,12 @@ export default function SettingsAdmin() {
     setSaving(true);
     try {
       const next = !offersPageEnabled;
-      const result = await updateSiteSettings(next, homepageVideoUrl || null);
+      const result = await updateSiteSettings(
+        next,
+        homepageVideoUrl || null,
+        instagramUrl || null,
+        youtubeProfileUrl || null,
+      );
       setOffersPageEnabled(result.offersPageEnabled);
     } finally {
       setSaving(false);
@@ -36,10 +45,35 @@ export default function SettingsAdmin() {
     setSaving(true);
     setError(null);
     try {
-      const result = await updateSiteSettings(offersPageEnabled, homepageVideoUrl || null);
+      const result = await updateSiteSettings(
+        offersPageEnabled,
+        homepageVideoUrl || null,
+        instagramUrl || null,
+        youtubeProfileUrl || null,
+      );
       setHomepageVideoUrl(result.homepageVideoUrl ?? '');
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to save video URL.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveSocials = async (e: FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    try {
+      const result = await updateSiteSettings(
+        offersPageEnabled,
+        homepageVideoUrl || null,
+        instagramUrl || null,
+        youtubeProfileUrl || null,
+      );
+      setInstagramUrl(result.instagramUrl ?? '');
+      setYoutubeProfileUrl(result.youtubeProfileUrl ?? '');
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Failed to save social profile URLs.');
     } finally {
       setSaving(false);
     }
@@ -96,6 +130,41 @@ export default function SettingsAdmin() {
           className="rounded-md bg-neutral-900 text-white px-4 py-2 text-sm font-medium disabled:opacity-50"
         >
           {saving ? 'Saving...' : 'Save video'}
+        </button>
+      </form>
+
+      <form onSubmit={handleSaveSocials} className="bg-white rounded-lg border border-neutral-200 p-4 max-w-xl space-y-3">
+        <div>
+          <p className="font-medium">Instagram profile URL</p>
+          <p className="text-sm text-neutral-500">
+            Paste your Instagram profile link so it appears in the website footer. Leave blank to hide it.
+          </p>
+        </div>
+        <input
+          value={instagramUrl}
+          onChange={(e) => setInstagramUrl(e.target.value)}
+          placeholder="https://www.instagram.com/yourprofile/"
+          className="w-full rounded-md border border-neutral-300 px-3 py-2"
+        />
+        <div>
+          <p className="font-medium">YouTube profile URL</p>
+          <p className="text-sm text-neutral-500">
+            Paste your YouTube channel link so it appears in the website footer. Leave blank to hide it.
+          </p>
+        </div>
+        <input
+          value={youtubeProfileUrl}
+          onChange={(e) => setYoutubeProfileUrl(e.target.value)}
+          placeholder="https://www.youtube.com/@yourchannel/"
+          className="w-full rounded-md border border-neutral-300 px-3 py-2"
+        />
+        {error && <p className="text-red-600 text-sm">{error}</p>}
+        <button
+          type="submit"
+          disabled={saving}
+          className="rounded-md bg-neutral-900 text-white px-4 py-2 text-sm font-medium disabled:opacity-50"
+        >
+          {saving ? 'Saving...' : 'Save social profiles'}
         </button>
       </form>
     </div>
