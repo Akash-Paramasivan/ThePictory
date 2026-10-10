@@ -94,14 +94,14 @@ export default function Home() {
         <section className="py-20">
           <h2 className="font-serif text-4xl text-center text-charcoal mb-10">Portfolio</h2>
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-lg shadow-lg bg-charcoal">
+            <div className="relative aspect-16/10 overflow-hidden rounded-lg shadow-lg bg-charcoal">
               {slides.map((item, index) => (
                 <img
                   key={item.id}
                   src={item.cloudinaryUrl}
                   alt={item.title}
                   loading="lazy"
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                  className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${
                     index === slideIndex ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
@@ -133,7 +133,7 @@ export default function Home() {
                   type="button"
                   onClick={() => setSlideIndex(index)}
                   aria-label={`Show ${item.title}`}
-                  className={`snap-start flex-shrink-0 w-32 sm:w-40 aspect-[4/3] overflow-hidden rounded-md transition-opacity duration-300 ${
+                  className={`snap-start shrink-0 w-32 sm:w-40 aspect-4/3 overflow-hidden rounded-md transition-opacity duration-300 ${
                     index === slideIndex ? 'opacity-100 ring-2 ring-charcoal' : 'opacity-60 hover:opacity-100'
                   }`}
                 >
@@ -172,7 +172,7 @@ export default function Home() {
                   src={item.cloudinaryUrl}
                   alt={item.title}
                   loading="lazy"
-                  className="w-full aspect-[4/5] object-cover mb-4"
+                  className="w-full aspect-4/5 object-cover mb-4"
                 />
                 <blockquote className="text-sm text-charcoal-soft leading-relaxed mb-3">
                   {item.description ?? item.title}
