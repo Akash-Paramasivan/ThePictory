@@ -15,7 +15,6 @@ export default function Home() {
   const { offersPageEnabled, homepageVideoUrl } = useSiteSettings();
 
   useEffect(() => {
-    getMedia({ featuredOnly: true }).then((all) => setHeroImages(all)).catch(() => setHeroImages([]));
     getMedia()
       .then((all) => {
         setHeroImages(all.filter((m) => m.isHero));
@@ -54,8 +53,12 @@ export default function Home() {
 
   return (
     <div className="bg-white">
-      {/* Hero — full-bleed gallery layout */}
-      <section className="relative text-white py-24 px-6 text-center">
+      {/* Hero — full-bleed gallery layout.
+          isolate creates a stacking context so the -z-10 image sits behind the
+          text but above the page background (a bare -z-10 would be hidden by
+          the ancestor's bg-white). bg-stone-900 is the fallback when no hero
+          image is loaded yet. */}
+      <section className="relative isolate bg-stone-900 text-white py-24 px-6 text-center">
         {heroImages.length > 0 && (
           <img
             src={heroImages[0].cloudinaryUrl}
