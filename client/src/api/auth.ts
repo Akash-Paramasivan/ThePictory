@@ -1,7 +1,7 @@
 import { apiFetch } from './client';
 
 export function login(username: string, password: string) {
-  return apiFetch<{ ticket: string; message: string }>('/api/auth/login', {
+  return apiFetch<{ ticket: string; message: string; token?: string; expiresAt?: string }>('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify({ username, password }),
   });

@@ -6,7 +6,7 @@ public record LoginRequest(
     [Required, StringLength(100)] string Username,
     [Required, StringLength(200)] string Password);
 
-public record LoginResponse(Guid Ticket, string Message);
+public record LoginResponse(Guid Ticket, string Message, string? Token, DateTime? ExpiresAt);
 
 public record VerifyOtpRequest(
     [Required] Guid Ticket,

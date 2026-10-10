@@ -41,19 +41,9 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Invalid username or password." });
         }
 
-        var code = Random.Shared.Next(0, 1_000_000).ToString("D6");
-        var otp = new AdminOtpCode
-        {
-            AdminUserId = admin.Id,
-            CodeHash = BCrypt.Net.BCrypt.HashPassword(code),
-            ExpiresAt = DateTime.UtcNow.AddMinutes(OtpExpiryMinutes)
-        };
-        _db.AdminOtpCodes.Add(otp);
-        await _db.SaveChangesAsync(ct);
-
-        await _emailService.SendOtpCodeAsync(admin.Email, code, ct);
-
-        return Ok(new LoginResponse(otp.Ticket, "Verification code sent to the admin email address."));
+        // TEMP BYPASS: skip OTP for client testing — restore later
+        var token = _jwtService.GenerateToken(admin);
+        return Ok(new LoginResponse(Guid.Empty, "Logged in.", token, DateTime.UtcNow.AddMinutes(60)));
     }
 
     [HttpPost("verify-otp")]
