@@ -44,15 +44,7 @@ export default function Home() {
     }
   }, [slides.length]);
 
-  useEffect(() => {
-    if (slides.length > 1) {
-      const timer = setInterval(() => {
-        setSlideIndex((i) => (i + 1) % slides.length);
-      }, 5000);
-      return () => clearInterval(timer);
-    }
-  }, [slides.length]);
-
+  // Removed auto-sliding
   useEffect(() => {
     const activeThumb = thumbStripRef.current?.children[slideIndex] as HTMLElement | undefined;
     activeThumb?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -63,16 +55,17 @@ export default function Home() {
   return (
     <div className="bg-white">
       {/* Hero — full-bleed gallery layout */}
-      <section className="relative bg-stone-900 text-white py-24 px-6 text-center">
+      <section className="relative text-white py-24 px-6 text-center">
+        {heroImages.length > 0 && (
+          <img
+            src={heroImages[0].cloudinaryUrl}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover -z-10"
+          />
+        )}
+        <div className="absolute inset-0 bg-stone-900/60 -z-10" />
         <h2 className="font-serif text-6xl sm:text-8xl tracking-tight mb-6">WHEN SOULS MAKE LOVE</h2>
-        <p className="text-stone-300 font-light tracking-widest text-sm sm:text-base mb-16">we craft pictures and movies that reflect your love — raw, real, and deeply rooted.</p>
-
-        {/* 3-row gallery images */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto">
-          {heroImages.slice(0, 3).map((img, i) => (
-            <img key={i} src={img.cloudinaryUrl} alt="" className="w-full h-96 object-cover" />
-          ))}
-        </div>
+        <p className="text-stone-100 font-light tracking-widest text-sm sm:text-base mb-16">we craft pictures and movies that reflect your love — raw, real, and deeply rooted.</p>
       </section>
 
       {/* Brand statement - Minimalist contrast */}
