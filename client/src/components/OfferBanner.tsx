@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { getActiveOffers, type Offer } from '../api/offers';
 import { useSiteSettings } from '../context/SiteSettingsContext';
+import SmartImage from './SmartImage';
 
 const STORAGE_KEY = 'pictory.offerBannerShown';
 
@@ -49,7 +50,7 @@ export default function OfferBanner() {
   return (
     <section className="relative w-full overflow-hidden bg-blush">
       {offer.mediaType === 'Image' && offer.imageUrl ? (
-        <img src={offer.imageUrl} alt={offer.title} className="w-full max-h-[480px] object-cover" />
+        <SmartImage src={offer.imageUrl} alt={offer.title} className="w-full max-h-[480px] object-cover" shimmerClassName="w-full h-[480px]" />
       ) : (
         <img
           src="/assets/offer-banner-placeholder.svg"

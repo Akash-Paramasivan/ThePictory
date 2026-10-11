@@ -4,6 +4,7 @@ import { getMedia, type MediaItem } from '../api/media';
 import { getActiveOffers, type Offer } from '../api/offers';
 import OfferCard from '../components/OfferCard';
 import OfferBanner from '../components/OfferBanner';
+import SmartImage from '../components/SmartImage';
 import { useSiteSettings } from '../context/SiteSettingsContext';
 import { getYouTubeBackgroundEmbedUrl } from '../lib/youtube';
 
@@ -58,12 +59,13 @@ export default function Home() {
           text but above the page background (a bare -z-10 would be hidden by
           the ancestor's bg-white). bg-stone-900 is the fallback when no hero
           image is loaded yet. */}
-      <section className="relative isolate bg-stone-900 text-white py-24 px-6 text-center">
+      <section className="relative isolate bg-stone-900 text-white py-24 sm:py-32 px-6 text-center min-h-screen flex flex-col items-center justify-center">
         {heroImages.length > 0 && (
-          <img
+          <SmartImage
             src={heroImages[0].cloudinaryUrl}
             alt=""
             className="absolute inset-0 w-full h-full object-cover -z-10"
+            shimmerClassName="absolute inset-0 w-full h-full -z-10"
           />
         )}
         <div className="absolute inset-0 bg-stone-900/60 -z-10" />
@@ -96,14 +98,14 @@ export default function Home() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="relative aspect-16/10 overflow-hidden rounded-lg shadow-lg bg-charcoal">
               {slides.map((item, index) => (
-                <img
+                <SmartImage
                   key={item.id}
                   src={item.cloudinaryUrl}
                   alt={item.title}
-                  loading="lazy"
                   className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${
                     index === slideIndex ? 'opacity-100' : 'opacity-0'
                   }`}
+                  shimmerClassName="absolute inset-0 w-full h-full"
                 />
               ))}
               <button
@@ -137,7 +139,11 @@ export default function Home() {
                     index === slideIndex ? 'opacity-100 ring-2 ring-charcoal' : 'opacity-60 hover:opacity-100'
                   }`}
                 >
-                  <img src={item.cloudinaryUrl} alt={item.title} loading="lazy" className="w-full h-full object-cover" />
+                  <SmartImage
+                    src={item.cloudinaryUrl}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -168,10 +174,9 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {testimonials.map((item) => (
               <figure key={item.id} className="text-center">
-                <img
+                <SmartImage
                   src={item.cloudinaryUrl}
                   alt={item.title}
-                  loading="lazy"
                   className="w-full aspect-4/5 object-cover mb-4"
                 />
                 <blockquote className="text-sm text-charcoal-soft leading-relaxed mb-3">

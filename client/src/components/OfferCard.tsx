@@ -1,5 +1,6 @@
 import { getYouTubeEmbedUrl } from '../lib/youtube';
 import type { Offer } from '../api/offers';
+import SmartImage from './SmartImage';
 
 export default function OfferCard({ offer }: { offer: Offer }) {
   const embedUrl = offer.mediaType === 'YouTube' && offer.youTubeUrl ? getYouTubeEmbedUrl(offer.youTubeUrl) : null;
@@ -7,7 +8,7 @@ export default function OfferCard({ offer }: { offer: Offer }) {
   return (
     <article className="border border-stone-200 overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
       {offer.mediaType === 'Image' && offer.imageUrl ? (
-        <img src={offer.imageUrl} alt={offer.title} className="w-full h-72 object-cover" loading="lazy" />
+        <SmartImage src={offer.imageUrl} alt={offer.title} className="w-full h-72 object-cover" />
       ) : (
         <div className="w-full h-72 bg-stone-100 flex items-center justify-center text-stone-400">No image</div>
       )}

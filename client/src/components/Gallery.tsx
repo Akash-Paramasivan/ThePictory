@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { MediaItem } from '../api/media';
+import SmartImage from './SmartImage';
 
 export default function Gallery({ items }: { items: MediaItem[] }) {
   const [active, setActive] = useState<MediaItem | null>(null);
@@ -18,10 +19,9 @@ export default function Gallery({ items }: { items: MediaItem[] }) {
             onClick={() => setActive(item)}
             className="block w-full aspect-[4/5] overflow-hidden group focus:outline-none"
           >
-            <img
+            <SmartImage
               src={item.cloudinaryUrl}
               alt={item.title}
-              loading="lazy"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           </button>
@@ -41,10 +41,11 @@ export default function Gallery({ items }: { items: MediaItem[] }) {
           >
             &times;
           </button>
-          <img
+          <SmartImage
             src={active.cloudinaryUrl}
             alt={active.title}
             className="max-h-[90vh] max-w-full object-contain"
+            shimmerClassName="w-[60vw] h-[80vh]"
             onClick={(e) => e.stopPropagation()}
           />
         </div>
