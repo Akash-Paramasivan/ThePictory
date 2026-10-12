@@ -28,12 +28,18 @@ export default function SmartImage({
     setLoaded(true);
   };
 
+  // While loading, keep a hidden <img> mounted so the resource actually
+  // starts downloading (a shimmer-only render would never fire onLoad).
+  // display:none images still load — we just skip lazy-loading on it.
   if (!loaded) {
     return (
-      <div
-        className={`shimmer ${shimmerClassName ?? className ?? 'w-full h-full'}`}
-        role="presentation"
-      />
+      <>
+        <img src={src} alt={alt} onLoad={handleLoad} className="hidden" aria-hidden="true" />
+        <div
+          className={`shimmer ${shimmerClassName ?? className ?? 'w-full h-full'}`}
+          role="presentation"
+        />
+      </>
     );
   }
 
