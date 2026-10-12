@@ -53,7 +53,28 @@ export default function Home() {
     activeThumb?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   }, [slideIndex]);
 
-  const goTo = (index: number) => setSlideIndex((index + slides.length) % slides.length);
+  const goTo = (index: number) => {
+    setSlideIndex((index + slides.length) % slides.length);
+  };
+
+  const [paused, setPaused] = useState(false);
+  const timerRef = useRef<number | null>(null);
+
+  const resetTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = window.setInterval(() => {
+      if (!paused && slides.length > 0) {
+        goTo(slideIndex + 1);
+      }
+    }, 3500);
+  };
+
+  useEffect(() => {
+    resetTimer();
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [slides.length, paused, resetTimer]);
 
   return (
     <div className="bg-white">
@@ -99,7 +120,11 @@ export default function Home() {
         <h2 className="font-serif text-4xl text-center text-charcoal mb-10">Portfolio</h2>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           {slides.length > 0 ? (
-            <div className="relative aspect-16/10 overflow-hidden rounded-lg shadow-lg bg-charcoal">
+            <div
+              className="relative aspect-16/10 overflow-hidden rounded-lg shadow-lg bg-charcoal"
+              onMouseEnter={() => setPaused(true)}
+              onMouseLeave={() => setPaused(false)}
+            >
               {slides.map((item, index) => (
                 <SmartImage
                   key={item.id}
