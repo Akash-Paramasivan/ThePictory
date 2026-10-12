@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getMedia, type MediaItem } from '../api/media';
 import { getActiveOffers, type Offer } from '../api/offers';
@@ -55,19 +55,18 @@ export default function Home() {
 
   const goTo = (index: number) => {
     setSlideIndex((index + slides.length) % slides.length);
+    resetTimer();
   };
 
   const [paused, setPaused] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
-      if (!paused && slides.length > 0) {
-        goTo(slideIndex + 1);
-      }
-    }, 3500);
-  };
+      setSlideIndex((prev) => (prev + 1) % slides.length);
+    }, 2000);
+  }, [slides.length]);
 
   useEffect(() => {
     resetTimer();
