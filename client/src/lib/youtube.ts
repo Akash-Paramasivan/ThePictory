@@ -9,7 +9,7 @@ export function extractYouTubeId(url: string): string | null {
 export function getYouTubeEmbedUrl(url: string): string | null {
   const id = extractYouTubeId(url);
   if (!id) return null;
-  return `https://www.youtube.com/embed/${id}`;
+  return `https://www.youtube.com/embed/${id}?controls=0&rel=0&playsinline=1&enablejsapi=1`;
 }
 
 /** Autoplaying, muted, looping, chromeless embed suitable for a background/showcase video section. */

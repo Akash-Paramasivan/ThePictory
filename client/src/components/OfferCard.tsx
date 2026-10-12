@@ -1,6 +1,7 @@
 import { getYouTubeEmbedUrl } from '../lib/youtube';
 import type { Offer } from '../api/offers';
 import SmartImage from './SmartImage';
+import VideoPlayer from './VideoPlayer';
 
 export default function OfferCard({ offer }: { offer: Offer }) {
   const embedUrl = offer.mediaType === 'YouTube' && offer.youTubeUrl ? getYouTubeEmbedUrl(offer.youTubeUrl) : null;
@@ -14,13 +15,7 @@ export default function OfferCard({ offer }: { offer: Offer }) {
       )}
       {embedUrl && (
         <div className="aspect-video w-full">
-          <iframe
-            src={embedUrl}
-            title={offer.title}
-            className="w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          <VideoPlayer url={offer.youTubeUrl!} />
         </div>
       )}
       <div className="p-6 text-center">
