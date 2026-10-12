@@ -204,6 +204,13 @@ export default function Contact() {
                 onChange={(e) => {
                   const digits = e.target.value.replace(/\D/g, '');
                   setForm({ ...form, whatsAppNumber: digits });
+                  // Show error immediately after 10 digits so users know
+                  if (digits.length >= 10) {
+                    const isIndian = form.whatsAppCountryCode === '+91';
+                    const valid = isIndian ? /^[6-9]\d{9}$/.test(digits) : (digits.length >= 10 && digits.length <= 15);
+                    if (!valid) setError('Please enter a valid mobile number');
+                    else setError(null);
+                  }
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -233,7 +240,7 @@ export default function Contact() {
               />
             </div>
             {!isStepValid() && form.whatsAppNumber.length > 0 && (
-              <p className="mt-3 text-sm text-charcoal-soft">
+              <p className="mt-3 text-sm text-red-600">
                 {form.whatsAppCountryCode === '+91'
                   ? 'Enter a valid 10-digit Indian mobile number (starts with 6-9)'
                   : 'Enter a valid mobile number (10-15 digits)'}
