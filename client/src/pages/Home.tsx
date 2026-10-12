@@ -13,7 +13,9 @@ export default function Home() {
   const [slides, setSlides] = useState<MediaItem[]>([]);
   const [testimonials, setTestimonials] = useState<MediaItem[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
-  const { offersPageEnabled, homepageVideoUrl } = useSiteSettings();
+  const [mediaLoaded, setMediaLoaded] = useState(false);
+  const { offersPageEnabled, homepageVideoUrl, loaded: settingsLoaded } = useSiteSettings();
+  const apiReady = settingsLoaded && mediaLoaded;
 
   useEffect(() => {
     getMedia()
@@ -26,7 +28,8 @@ export default function Home() {
         setHeroImages([]);
         setSlides([]);
         setTestimonials([]);
-      });
+      })
+      .finally(() => setMediaLoaded(true));
     if (offersPageEnabled) {
       getActiveOffers().then(setOffers).catch(() => setOffers([]));
     }
@@ -60,7 +63,7 @@ export default function Home() {
           the ancestor's bg-white). bg-stone-900 is the fallback when no hero
           image is loaded yet. */}
       <section className="relative isolate bg-stone-900 text-white py-24 sm:py-32 px-6 text-center min-h-screen flex flex-col items-center justify-center">
-        {heroImages.length > 0 && (
+        {apiReady && heroImages.length > 0 && (
           <SmartImage
             src={heroImages[0].cloudinaryUrl}
             alt=""
@@ -92,10 +95,10 @@ export default function Home() {
       <OfferBanner />
 
       {/* Portfolio gallery — slide-flagged photos, slideshow with thumbnail scroller */}
-      {slides.length > 0 && (
-        <section className="py-20">
-          <h2 className="font-serif text-4xl text-center text-charcoal mb-10">Portfolio</h2>
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <section className="py-20">
+        <h2 className="font-serif text-4xl text-center text-charcoal mb-10">Portfolio</h2>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          {slides.length > 0 ? (
             <div className="relative aspect-16/10 overflow-hidden rounded-lg shadow-lg bg-charcoal">
               {slides.map((item, index) => (
                 <SmartImage
@@ -125,31 +128,33 @@ export default function Home() {
                 ›
               </button>
             </div>
-            <div
-              ref={thumbStripRef}
-              className="flex gap-3 overflow-x-auto pb-4 pt-4 snap-x snap-mandatory"
-            >
-              {slides.map((item, index) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setSlideIndex(index)}
-                  aria-label={`Show ${item.title}`}
-                  className={`snap-start shrink-0 w-32 sm:w-40 aspect-4/3 overflow-hidden rounded-md transition-opacity duration-300 ${
-                    index === slideIndex ? 'opacity-100 ring-2 ring-charcoal' : 'opacity-60 hover:opacity-100'
-                  }`}
-                >
-                  <SmartImage
-                    src={item.cloudinaryUrl}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
+          ) : (
+            <div className="aspect-16/10 shimmer" />
+          )}
+          <div
+            ref={thumbStripRef}
+            className="flex gap-3 overflow-x-auto pb-4 pt-4 snap-x snap-mandatory"
+          >
+            {slides.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setSlideIndex(index)}
+                aria-label={`Show ${item.title}`}
+                className={`snap-start shrink-0 w-32 sm:w-40 aspect-4/3 overflow-hidden rounded-md transition-opacity duration-300 ${
+                  index === slideIndex ? 'opacity-100 ring-2 ring-charcoal' : 'opacity-60 hover:opacity-100'
+                }`}
+              >
+                <SmartImage
+                  src={item.cloudinaryUrl}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* Showcase video — chromeless YouTube embed.
           youtube-nocookie.com hides the YouTube branding frame from casual view,

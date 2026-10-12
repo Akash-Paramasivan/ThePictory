@@ -12,6 +12,7 @@ export default function SmartImage({
   alt,
   className,
   shimmerClassName,
+  onClick,
 }: {
   src: string;
   alt: string;
