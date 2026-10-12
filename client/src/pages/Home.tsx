@@ -55,25 +55,25 @@ export default function Home() {
 
   const goTo = (index: number) => {
     setSlideIndex((index + slides.length) % slides.length);
-    resetTimer();
+    startAutoSlide();
   };
 
-  const [paused, setPaused] = useState(false);
+  const [hoverPaused, setHoverPaused] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  const resetTimer = useCallback(() => {
+  const startAutoSlide = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
-      setSlideIndex((prev) => (prev + 1) % slides.length);
+      if (slides.length > 1) {
+        setSlideIndex((prev) => (prev + 1) % slides.length);
+      }
     }, 2000);
   }, [slides.length]);
 
   useEffect(() => {
-    resetTimer();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [slides.length, paused, resetTimer]);
+    startAutoSlide();
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [startAutoSlide]);
 
   return (
     <div className="bg-white">
@@ -121,8 +121,8 @@ export default function Home() {
           {slides.length > 0 ? (
             <div
               className="relative aspect-16/10 overflow-hidden rounded-lg shadow-lg bg-charcoal"
-              onMouseEnter={() => setPaused(true)}
-              onMouseLeave={() => setPaused(false)}
+              onMouseEnter={() => setHoverPaused(true)}
+              onMouseLeave={() => setHoverPaused(false)}
             >
               {slides.map((item, index) => (
                 <SmartImage
