@@ -64,11 +64,11 @@ export default function Home() {
   const startAutoSlide = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
-      if (slides.length > 1) {
+      if (slides.length > 1 && !hoverPaused) {
         setSlideIndex((prev) => (prev + 1) % slides.length);
       }
     }, 2000);
-  }, [slides.length]);
+  }, [slides.length, hoverPaused]);
 
   useEffect(() => {
     startAutoSlide();

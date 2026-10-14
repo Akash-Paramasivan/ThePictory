@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { getYouTubeEmbedUrl } from '../lib/youtube';
 
-const EMBED_PARAMS = 'controls=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
-
 export default function VideoPlayer({ url }: { url: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
@@ -13,7 +11,7 @@ export default function VideoPlayer({ url }: { url: string }) {
   const videoId = embedUrl?.split('/').pop() ?? null;
 
   // Load the YouTube Iframe API once and mount the player into the placeholder div.
-  // YT.Player injects its own <iframe> carrying EMBED_PARAMS.
+  // YT.Player injects its own <iframe>.
   useEffect(() => {
     if (!videoId) return;
 
