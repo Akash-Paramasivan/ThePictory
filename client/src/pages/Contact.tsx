@@ -274,10 +274,13 @@ export default function Contact() {
               value={form.eventDate}
               onChange={(e) => { setForm({ ...form, eventDate: e.target.value }); clearErrorOnInput(); }}
               onKeyDown={(e) => e.key === 'Enter' && goNext()}
-              placeholder="e.g., November 2026 or 15th Dec 2026"
+              placeholder="e.g., 14th Nov 2026 or Dec 2026"
               maxLength={50}
               className="w-full border-b-2 border-charcoal/20 focus:border-charcoal outline-none py-2 text-lg bg-transparent font-sans"
             />
+            <p className="mt-3 text-sm text-charcoal-soft font-sans">
+              (Exact date not finalized? Just mention the month/year)
+            </p>
           </div>
         )}
         {step === 'budget' && (
