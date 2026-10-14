@@ -144,6 +144,17 @@ export default function Contact() {
     try {
       await submitContactForm(payload);
       setStatus('success');
+
+      // Fire Meta Pixel Lead event on successful submission.
+      const win = window as Window & { fbq?: (...args: (string | Record<string, unknown>)[]) => void };
+      if (win.fbq) {
+        win.fbq('track', 'Lead', {
+          content_name: 'Contact Form Submission',
+          event_type: eventType,
+          budget: currentForm.budget,
+        });
+      }
+
       // Hand off to WhatsApp with the enquiry pre-filled.
       const message = [
         'New Enquiry from The Pictory',
@@ -327,7 +338,18 @@ export default function Contact() {
                 className="flex-1 border-b-2 border-charcoal/20 focus:border-charcoal outline-none py-2 text-lg bg-transparent font-sans"
               />
             </div>
-            {/* Validation error shown only after submit attempt, cleared on input. */}
+            {(() => {
+              const cleanNumber = form.whatsAppNumber.replace(/\D/g, '');
+              const isIndian = form.whatsAppCountryCode === '+91';
+              const isValid = isIndian
+                ? /^[6-9]\d{9}$/.test(cleanNumber)
+                : cleanNumber.length >= 10 && cleanNumber.length <= 15;
+
+              if (isValid) {
+                return <p className="mt-3 text-sm text-green-700 font-sans">Looks good ✓</p>;
+              }
+              return null;
+            })()}
           </div>
         )}
 
