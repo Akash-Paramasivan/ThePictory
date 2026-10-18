@@ -4,9 +4,9 @@ import { ApiError } from '../api/client';
 
 const EVENT_TYPES = ['Wedding', 'Engagement', 'Wedding + Engagement', 'Other'];
 // Budget tiers for "Wedding + Engagement" events.
-const WEDDING_ENGAGEMENT_BUDGET_OPTIONS = ['1L – 1.5L', '1.5L – 2L', '2L – 2.5L', '3L+ and above'];
+const WEDDING_ENGAGEMENT_BUDGET_OPTIONS = ['₹1 Lakh – ₹1.5 Lakhs', '₹1.5 Lakhs – ₹2 Lakhs', '₹2 Lakhs – ₹2.5 Lakhs', '₹3 Lakhs & Above'];
 // Budget tiers shown only when the event type is "Other".
-const OTHER_BUDGET_OPTIONS = ['Above 25k – 50k', 'Above 50k – 1L', '1L+ and above'];
+const OTHER_BUDGET_OPTIONS = ['₹25,000 – ₹50,000', '₹50,000 – ₹1 Lakh', '₹1 Lakh & Above'];
 // Original budget ranges, preserved for "Wedding" or "Engagement" alone.
 const BUDGET_OPTIONS = ['₹50,000 – ₹1 Lakh', '₹1 Lakh – ₹2 Lakhs', '₹2 Lakhs – ₹3 Lakhs', '₹3 Lakhs & Above'];
 const COUNTRY_CODES = [
