@@ -8,7 +8,7 @@ namespace ThePictory.Api.Services;
 public interface IEmailService
 {
     Task SendOtpCodeAsync(string toEmail, string code, CancellationToken ct = default);
-    Task SendContactNotificationAsync(string fullName, string eventType, string photographyDays, string budget, string whatsAppNumber, CancellationToken ct = default);
+    Task SendContactNotificationAsync(string fullName, string eventType, string photographyDays, string budget, string email, string whatsAppNumber, CancellationToken ct = default);
 }
 
 /// Sends via Brevo's HTTPS transactional email API (not SMTP) since many PaaS hosts block/throttle outbound SMTP ports.
@@ -31,13 +31,14 @@ public class EmailService : IEmailService
             $"<p>Your one-time verification code is:</p><h2>{code}</h2><p>This code expires in 5 minutes. If you did not request this, ignore this email.</p>", ct);
     }
 
-    public Task SendContactNotificationAsync(string fullName, string eventType, string photographyDays, string budget, string whatsAppNumber, CancellationToken ct = default)
+    public Task SendContactNotificationAsync(string fullName, string eventType, string photographyDays, string budget, string email, string whatsAppNumber, CancellationToken ct = default)
     {
         return SendAsync(_options.AdminNotificationAddress, "New contact form submission",
             $"<p><strong>Name:</strong> {WebUtility(fullName)}</p>" +
             $"<p><strong>Event:</strong> {WebUtility(eventType)}</p>" +
             $"<p><strong>Days:</strong> {WebUtility(photographyDays)}</p>" +
             $"<p><strong>Budget:</strong> {WebUtility(budget)}</p>" +
+            $"<p><strong>Email:</strong> {WebUtility(email)}</p>" +
             $"<p><strong>WhatsApp:</strong> {WebUtility(whatsAppNumber)}</p>", ct);
     }
 

@@ -4,7 +4,13 @@ import { ApiError } from '../api/client';
 
 const EVENT_TYPES = ['Wedding', 'Engagement', 'Wedding + Engagement', 'Other'];
 // Budget tiers for "Wedding + Engagement" events.
-const WEDDING_ENGAGEMENT_BUDGET_OPTIONS = ['₹1 Lakh – ₹1.5 Lakhs', '₹1.5 Lakhs – ₹2 Lakhs', '₹2 Lakhs – ₹2.5 Lakhs', '₹3 Lakhs & Above'];
+const WEDDING_ENGAGEMENT_BUDGET_OPTIONS = [
+  '₹1 Lakh – ₹1.5 Lakhs',
+  '₹1.5 Lakhs – ₹2 Lakhs',
+  '₹2 Lakhs – ₹2.5 Lakhs',
+  '₹2.5 Lakhs – ₹3 Lakhs',
+  '₹3 Lakhs & Above',
+];
 // Budget tiers shown only when the event type is "Other".
 const OTHER_BUDGET_OPTIONS = ['₹25,000 – ₹50,000', '₹50,000 – ₹1 Lakh', '₹1 Lakh & Above'];
 // Original budget ranges, preserved for "Wedding" or "Engagement" alone.
@@ -22,11 +28,12 @@ interface FormState {
   eventDate: string;
   budget: string;
   fullName: string;
+  email: string;
   whatsAppCountryCode: string;
   whatsAppNumber: string;
 }
 
-const STEPS = ['eventType', 'eventDate', 'budget', 'fullName', 'whatsApp'] as const;
+const STEPS = ['eventType', 'eventDate', 'budget', 'fullName', 'email', 'whatsApp'] as const;
 
 export default function Contact() {
   const [stepIndex, setStepIndex] = useState(0);
@@ -36,6 +43,7 @@ export default function Contact() {
     eventDate: '',
     budget: '',
     fullName: '',
+    email: '',
     whatsAppCountryCode: '+91',
     whatsAppNumber: '',
   });
@@ -69,6 +77,10 @@ export default function Contact() {
         return f.budget !== '';
       case 'fullName':
         return f.fullName.trim().length > 0;
+      case 'email': {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(f.email.trim());
+      }
       case 'whatsApp': {
         const digits = f.whatsAppNumber.replace(/\D/g, '');
         const isIndian = f.whatsAppCountryCode === '+91';
@@ -98,6 +110,16 @@ export default function Contact() {
 
   const goNext = async () => {
     const currentForm = formRef.current;
+
+    // For the email step, validate strictly on button click.
+    if (step === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(currentForm.email.trim())) {
+        setError('Please enter a valid email address.');
+        return;
+      }
+      setError(null);
+    }
 
     // For the WhatsApp step, validate strictly on button click.
     if (step === 'whatsApp') {
@@ -135,6 +157,7 @@ export default function Contact() {
       photographyDays: currentForm.eventDate.trim(),
       budget: currentForm.budget,
       fullName: currentForm.fullName.trim(),
+      email: currentForm.email.trim(),
       whatsAppCountryCode: currentForm.whatsAppCountryCode,
       whatsAppNumber: currentForm.whatsAppNumber.trim(),
     };
@@ -163,6 +186,7 @@ export default function Contact() {
         `Event: ${eventType}`,
         `Event date: ${currentForm.eventDate.trim()}`,
         `Budget: ${currentForm.budget}`,
+        `Email: ${currentForm.email.trim()}`,
         `WhatsApp: ${currentForm.whatsAppCountryCode} ${currentForm.whatsAppNumber.trim()}`,
       ].join('\n');
       try { sessionStorage.setItem('offer-banner', 'pending'); } catch { /* sessionStorage unavailable */ }
@@ -196,7 +220,7 @@ export default function Contact() {
   };
 
   if (status === 'success') {
-    const message = `New Enquiry\nName: ${form.fullName}\nEvent: ${form.eventType}\nEvent date: ${form.eventDate}\nBudget: ${form.budget}\nWhatsApp: ${form.whatsAppCountryCode} ${form.whatsAppNumber}`;
+    const message = `New Enquiry\nName: ${form.fullName}\nEvent: ${form.eventType}\nEvent date: ${form.eventDate}\nBudget: ${form.budget}\nEmail: ${form.email}\nWhatsApp: ${form.whatsAppCountryCode} ${form.whatsAppNumber}`;
     const waUrl = `https://wa.me/916380630219?text=${encodeURIComponent(message)}`;
     return (
       <div className="mx-auto max-w-xl px-4 sm:px-6 py-20 text-center">
@@ -306,6 +330,35 @@ export default function Contact() {
               maxLength={150}
               className="w-full border-b-2 border-charcoal/20 focus:border-charcoal outline-none py-2 text-lg bg-transparent font-sans"
             />
+          </div>
+        )}
+        {step === 'email' && (
+          <div>
+            <h2 className="font-sans font-bold text-2xl text-charcoal mb-6">
+              Your Email Address <span className="text-charcoal-soft">*</span>
+            </h2>
+            <input
+              type="email"
+              autoFocus
+              value={form.email}
+              onChange={(e) => { setForm({ ...form, email: e.target.value }); clearErrorOnInput(); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  goNext();
+                }
+              }}
+              placeholder="name@example.com"
+              maxLength={150}
+              className="w-full border-b-2 border-charcoal/20 focus:border-charcoal outline-none py-2 text-lg bg-transparent font-sans"
+            />
+            {(() => {
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              if (emailRegex.test(form.email.trim())) {
+                return <p className="mt-3 text-sm text-green-700 font-sans">Looks good ✓</p>;
+              }
+              return null;
+            })()}
           </div>
         )}
         {step === 'whatsApp' && (

@@ -160,6 +160,10 @@ namespace ThePictory.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("EventType")
                         .IsRequired()
                         .HasColumnType("text");

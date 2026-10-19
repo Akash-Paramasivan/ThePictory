@@ -29,7 +29,7 @@ export default function ContactsAdmin() {
             <div className="flex justify-between items-start gap-4">
               <div>
                 <p className="font-medium">
-                  {s.fullName} <span className="text-neutral-400 font-normal">({s.whatsAppCountryCode} {s.whatsAppNumber})</span>
+                  {s.fullName} <span className="text-neutral-400 font-normal">({s.email} &middot; {s.whatsAppCountryCode} {s.whatsAppNumber})</span>
                 </p>
                 <p className="text-sm text-neutral-600 mt-1">
                   {s.eventType} &middot; {s.photographyDays} &middot; {s.budget}

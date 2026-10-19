@@ -6,6 +6,7 @@ export interface ContactSubmission {
   photographyDays: string;
   budget: string;
   fullName: string;
+  email: string;
   whatsAppCountryCode: string;
   whatsAppNumber: string;
   submittedAt: string;
@@ -17,6 +18,7 @@ export function submitContactForm(data: {
   photographyDays: string;
   budget: string;
   fullName: string;
+  email: string;
   whatsAppCountryCode: string;
   whatsAppNumber: string;
 }) {

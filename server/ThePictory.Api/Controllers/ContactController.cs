@@ -34,6 +34,7 @@ public class ContactController : ControllerBase
             PhotographyDays = request.PhotographyDays.Trim(),
             Budget = request.Budget.Trim(),
             FullName = request.FullName.Trim(),
+            Email = request.Email.Trim(),
             WhatsAppCountryCode = request.WhatsAppCountryCode.Trim(),
             WhatsAppNumber = request.WhatsAppNumber.Trim()
         };
@@ -42,7 +43,7 @@ public class ContactController : ControllerBase
 
         try
         {
-            await _emailService.SendContactNotificationAsync(submission.FullName, submission.EventType, submission.PhotographyDays, submission.Budget, $"{submission.WhatsAppCountryCode} {submission.WhatsAppNumber}", ct);
+            await _emailService.SendContactNotificationAsync(submission.FullName, submission.EventType, submission.PhotographyDays, submission.Budget, submission.Email, $"{submission.WhatsAppCountryCode} {submission.WhatsAppNumber}", ct);
         }
         catch (Exception ex)
         {
@@ -59,7 +60,7 @@ public class ContactController : ControllerBase
     {
         var submissions = await _db.ContactSubmissions
             .OrderByDescending(c => c.SubmittedAt)
-            .Select(c => new ContactSubmissionDto(c.Id, c.EventType, c.PhotographyDays, c.Budget, c.FullName, c.WhatsAppCountryCode, c.WhatsAppNumber, c.SubmittedAt, c.IsRead))
+            .Select(c => new ContactSubmissionDto(c.Id, c.EventType, c.PhotographyDays, c.Budget, c.FullName, c.Email, c.WhatsAppCountryCode, c.WhatsAppNumber, c.SubmittedAt, c.IsRead))
             .ToListAsync(ct);
         return Ok(submissions);
     }
