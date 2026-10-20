@@ -89,7 +89,6 @@ export default function Contact() {
         return digits.length >= 10 && digits.length <= 15;
       }
       default: {
-        // Ensure exhaustive switch checking.
         return step as never;
       }
     }
@@ -99,12 +98,9 @@ export default function Contact() {
     setForm((f) => ({
       ...f,
       eventType: value,
-      // Only relevant while "Other" is selected.
       eventOther: value === 'Other' ? f.eventOther : '',
-      // Reset budget when event type changes (except for "Other" where user must specify).
       budget: value === f.eventType ? f.budget : '',
     }));
-    // Clear any lingering error when the user updates the event type.
     setError(null);
   };
 
@@ -133,7 +129,6 @@ export default function Contact() {
         setError('Please enter a valid 10-digit mobile number.');
         return;
       }
-      // Clear any previous validation error and proceed.
       setError(null);
     }
 
@@ -144,14 +139,11 @@ export default function Contact() {
     }
     setStatus('submitting');
     setError(null);
-    // An "Other" selection is submitted as "Other – <specification>"; the
-    // event date fills the existing photographyDays field so the API
-    // payload shape is unchanged.
+
     const eventType = currentForm.eventType === 'Other'
       ? `Other – ${currentForm.eventOther.trim()}`
       : currentForm.eventType;
 
-    // Build the payload - match backend schema exactly.
     const payload = {
       eventType,
       photographyDays: currentForm.eventDate.trim(),
@@ -178,26 +170,24 @@ export default function Contact() {
         });
       }
 
-      // Hand off to WhatsApp with the enquiry pre-filled.
+      // Hand off to WhatsApp with the enquiry pre-filled using the exact requested template.
       const message = [
-        'New Enquiry from The Pictory',
+        "Hi The Pictory! I'm interested in your wedding photography packages. Here are my event details:",
         '',
         `Name: ${currentForm.fullName.trim()}`,
         `Event: ${eventType}`,
-        `Event date: ${currentForm.eventDate.trim()}`,
+        `Event Date: ${currentForm.eventDate.trim()}`,
         `Budget: ${currentForm.budget}`,
         `Email: ${currentForm.email.trim()}`,
         `WhatsApp: ${currentForm.whatsAppCountryCode} ${currentForm.whatsAppNumber.trim()}`,
       ].join('\n');
+
       try { sessionStorage.setItem('offer-banner', 'pending'); } catch { /* sessionStorage unavailable */ }
       window.location.href = `https://wa.me/916380630219?text=${encodeURIComponent(message)}`;
     } catch (err) {
-      // Log the exact error response body so any API validation mismatch
-      // (e.g. backend rejecting the payload shape) is visible in console.
       console.error('[Contact] submit failed:', err);
       if (err instanceof ApiError) {
         console.error('[Contact] API error response:', err.status, err.message);
-        // Show the specific backend error message if available.
         setError(err.message);
       } else {
         console.error('[Contact] Unknown error:', err);
@@ -207,20 +197,26 @@ export default function Contact() {
     }
   };
 
-  // Clear the error message whenever the user types or changes a field so
-  // the "Something went wrong" banner doesn't persist across steps.
   const clearErrorOnInput = () => setError(null);
 
   const goBack = () => {
     if (stepIndex > 0) {
-      // Reset error and status when navigating between steps to clear persistent error messages.
       setStepIndex((i) => i - 1);
       setError(null);
     }
   };
 
   if (status === 'success') {
-    const message = `New Enquiry\nName: ${form.fullName}\nEvent: ${form.eventType}\nEvent date: ${form.eventDate}\nBudget: ${form.budget}\nEmail: ${form.email}\nWhatsApp: ${form.whatsAppCountryCode} ${form.whatsAppNumber}`;
+    const message = [
+      "Hi The Pictory! I'm interested in your wedding photography packages. Here are my event details:",
+      '',
+      `Name: ${form.fullName.trim()}`,
+      `Event: ${form.eventType === 'Other' ? `Other – ${form.eventOther.trim()}` : form.eventType}`,
+      `Event Date: ${form.eventDate.trim()}`,
+      `Budget: ${form.budget}`,
+      `Email: ${form.email.trim()}`,
+      `WhatsApp: ${form.whatsAppCountryCode} ${form.whatsAppNumber.trim()}`,
+    ].join('\n');
     const waUrl = `https://wa.me/916380630219?text=${encodeURIComponent(message)}`;
     return (
       <div className="mx-auto max-w-xl px-4 sm:px-6 py-20 text-center">
@@ -250,7 +246,9 @@ export default function Contact() {
 
   return (
     <div className="mx-auto max-w-xl px-4 sm:px-6 py-16 min-h-[70vh] flex flex-col">
-      <h1 className="font-sans font-bold text-3xl text-center text-charcoal mb-10">Claim Your Exclusive Offer</h1>
+      <h1 className="font-sans font-bold text-xl sm:text-2xl text-center text-charcoal mb-10 leading-snug max-w-lg mx-auto">
+        Get a FREE Pre-Wedding Photoshoot, Cinematic Reel & Luxury Magazine with your wedding photography booking.
+      </h1>
       <div className="h-px w-full bg-charcoal/10 mb-12">
         <div className="h-px bg-charcoal transition-all" style={{ width: `${progress}%` }} />
       </div>
@@ -264,8 +262,6 @@ export default function Contact() {
               value={form.eventType}
               onChange={handleEventTypeChange}
               onSelect={(value) => {
-                // "Other" must be specified in the free-text input before
-                // the form can advance.
                 if (value !== 'Other') setTimeout(goNext, 200);
               }}
             />
@@ -291,7 +287,7 @@ export default function Contact() {
         {step === 'eventDate' && (
           <div>
             <h2 className="font-sans font-bold text-2xl text-charcoal mb-6">
-              What is your estimated event date or month? <span className="text-charcoal-soft">*</span>
+              What is your event date? <span className="text-charcoal-soft">*</span>
             </h2>
             <input
               autoFocus
