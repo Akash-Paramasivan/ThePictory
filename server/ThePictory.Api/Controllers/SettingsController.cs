@@ -31,7 +31,7 @@ public class SettingsController : ControllerBase
     {
         if (!string.IsNullOrWhiteSpace(request.HomepageVideoUrl) && !YouTubeUrlValidator.IsValid(request.HomepageVideoUrl))
         {
-            return BadRequest(new { message = "A valid YouTube URL is required." });
+            return BadRequest(new { message = "A valid YouTube or Instagram URL is required." });
         }
 
         var settings = await GetOrCreateSettingsAsync(ct);

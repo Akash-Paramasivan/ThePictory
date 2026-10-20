@@ -1,6 +1,13 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { getSiteSettings, updateSiteSettings } from '../../api/settings';
 import { ApiError } from '../../api/client';
+import { extractYouTubeId, extractInstagramId } from '../../lib/embeds';
+
+/** Returns true if the URL is blank, a valid YouTube URL, or a valid Instagram reel/post URL. */
+function isValidShowcaseUrl(url: string): boolean {
+  if (!url.trim()) return true;
+  return extractYouTubeId(url) !== null || extractInstagramId(url) !== null;
+}
 
 export default function SettingsAdmin() {
   const [offersPageEnabled, setOffersPageEnabled] = useState(false);
@@ -40,6 +47,10 @@ export default function SettingsAdmin() {
 
   const handleVideoSave = async (e: FormEvent) => {
     e.preventDefault();
+    if (!isValidShowcaseUrl(homepageVideoUrl)) {
+      setError('Please enter a valid YouTube or Instagram Reel/Post URL.');
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
