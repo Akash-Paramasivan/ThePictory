@@ -50,11 +50,10 @@ export function getShowcaseEmbedConfig(url: string): EmbedConfig | null {
 
   const igId = extractInstagramId(url);
   if (igId) {
-    // Determine if it's a reel or a post for the embed URL
     const isReel = url.includes('/reel/');
     const path = isReel ? 'reel' : 'p';
     return {
-      url: `https://www.instagram.com/${path}/${igId}/embed`,
+      url: `https://www.instagram.com/${path}/${igId}/embed/?captioned=0`,
       type: 'instagram',
       aspectRatio: isReel ? '9/16' : 'auto',
     };

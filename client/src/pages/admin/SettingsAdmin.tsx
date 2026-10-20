@@ -12,9 +12,9 @@ function isValidShowcaseUrl(url: string): boolean {
 /** Returns true if the URL is blank or a valid social profile URL (YouTube channel or Instagram profile). */
 function isValidSocialProfile(url: string): boolean {
   if (!url.trim()) return true;
-  const clean = url.split('?')[0];
-  const isInstagramProfile = /instagram\.com\/([a-zA-Z0-9_.-]+)\/?$/i.test(clean);
-  const isYouTubeChannel = /youtube\.com\/(?:channel\/[\w-]+|@[\w.-]+|user\/[\w.-]+|c\/[\w.-]+)\/?$/i.test(clean);
+  const clean = url.trim().split('?')[0].replace(/\/$/, '');
+  const isInstagramProfile = /^https?:\/\/(?:www\.)?instagram\.com\/(?!reel|p|tv|explore|accounts)[a-zA-Z0-9_.-]+$/i.test(clean);
+  const isYouTubeChannel = /^https?:\/\/(?:www\.)?youtube\.com\/(?:channel\/[\w-]+|@[\w.-]+|user\/[\w.-]+|c\/[\w.-]+)$/i.test(clean);
   return isInstagramProfile || isYouTubeChannel;
 }
 
@@ -45,9 +45,9 @@ export default function SettingsAdmin() {
       const next = !offersPageEnabled;
       const result = await updateSiteSettings(
         next,
-        homepageVideoUrl || null,
-        instagramUrl || null,
-        youtubeProfileUrl || null,
+        homepageVideoUrl.trim() || null,
+        instagramUrl.trim() || null,
+        youtubeProfileUrl.trim() || null,
       );
       setOffersPageEnabled(result.offersPageEnabled);
     } finally {
@@ -57,8 +57,9 @@ export default function SettingsAdmin() {
 
   const handleVideoSave = async (e: FormEvent) => {
     e.preventDefault();
-    if (!isValidShowcaseUrl(homepageVideoUrl)) {
-      setVideoError('Please enter a valid YouTube or Instagram Reel/Post URL.');
+    const trimmedUrl = homepageVideoUrl.trim();
+    if (!isValidShowcaseUrl(trimmedUrl)) {
+      setVideoError('A valid YouTube or Instagram Reel/Post URL is required.');
       return;
     }
     setSaving(true);
@@ -66,9 +67,9 @@ export default function SettingsAdmin() {
     try {
       const result = await updateSiteSettings(
         offersPageEnabled,
-        homepageVideoUrl || null,
-        instagramUrl || null,
-        youtubeProfileUrl || null,
+        trimmedUrl || null,
+        instagramUrl.trim() || null,
+        youtubeProfileUrl.trim() || null,
       );
       setHomepageVideoUrl(result.homepageVideoUrl ?? '');
     } catch (err) {
@@ -80,11 +81,14 @@ export default function SettingsAdmin() {
 
   const handleSaveSocials = async (e: FormEvent) => {
     e.preventDefault();
-    if (!isValidSocialProfile(instagramUrl)) {
+    const trimmedIg = instagramUrl.trim();
+    const trimmedYt = youtubeProfileUrl.trim();
+
+    if (!isValidSocialProfile(trimmedIg)) {
       setSocialError('Please enter a valid Instagram profile URL.');
       return;
     }
-    if (!isValidSocialProfile(youtubeProfileUrl)) {
+    if (!isValidSocialProfile(trimmedYt)) {
       setSocialError('Please enter a valid YouTube profile URL.');
       return;
     }
@@ -93,9 +97,9 @@ export default function SettingsAdmin() {
     try {
       const result = await updateSiteSettings(
         offersPageEnabled,
-        homepageVideoUrl || null,
-        instagramUrl || null,
-        youtubeProfileUrl || null,
+        homepageVideoUrl.trim() || null,
+        trimmedIg || null,
+        trimmedYt || null,
       );
       setInstagramUrl(result.instagramUrl ?? '');
       setYoutubeProfileUrl(result.youtubeProfileUrl ?? '');
@@ -146,7 +150,10 @@ export default function SettingsAdmin() {
         </div>
         <input
           value={homepageVideoUrl}
-          onChange={(e) => setHomepageVideoUrl(e.target.value)}
+          onChange={(e) => {
+            setHomepageVideoUrl(e.target.value);
+            if (videoError) setVideoError(null);
+          }}
           placeholder="YouTube or Instagram URL..."
           className="w-full rounded-md border border-neutral-300 px-3 py-2"
         />
@@ -169,7 +176,10 @@ export default function SettingsAdmin() {
         </div>
         <input
           value={instagramUrl}
-          onChange={(e) => setInstagramUrl(e.target.value)}
+          onChange={(e) => {
+            setInstagramUrl(e.target.value);
+            if (socialError) setSocialError(null);
+          }}
           placeholder="https://www.instagram.com/yourprofile/"
           className="w-full rounded-md border border-neutral-300 px-3 py-2"
         />
@@ -181,7 +191,10 @@ export default function SettingsAdmin() {
         </div>
         <input
           value={youtubeProfileUrl}
-          onChange={(e) => setYoutubeProfileUrl(e.target.value)}
+          onChange={(e) => {
+            setYoutubeProfileUrl(e.target.value);
+            if (socialError) setSocialError(null);
+          }}
           placeholder="https://www.youtube.com/@yourchannel/"
           className="w-full rounded-md border border-neutral-300 px-3 py-2"
         />
@@ -191,7 +204,7 @@ export default function SettingsAdmin() {
           disabled={saving}
           className="rounded-md bg-neutral-900 text-white px-4 py-2 text-sm font-medium disabled:opacity-50"
         >
-          {saving ? 'Saving...' : 'Save social profiles'}
+          {saving ? 'Saving Calls...' : 'Save social profiles'}
         </button>
       </form>
     </div>

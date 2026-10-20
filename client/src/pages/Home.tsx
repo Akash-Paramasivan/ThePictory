@@ -195,7 +195,7 @@ export default function Home() {
             title="Showcase"
             allow="autoplay; encrypted-media; fullscreen"
             allowFullScreen
-            className="absolute inset-0 w-full h-full"
+            className={`w-full ${embedConfig.type === 'instagram' ? 'absolute -top-[54px] h-[calc(100%+108px)]' : 'absolute inset-0 h-full'}`}
             style={{ border: 'none', opacity: 0.95 }}
             scrolling="no"
           />
