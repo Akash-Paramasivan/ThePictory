@@ -3,18 +3,17 @@ import { submitContactForm } from '../api/contact';
 import { ApiError } from '../api/client';
 
 const EVENT_TYPES = ['Wedding', 'Engagement', 'Wedding + Engagement', 'Other'];
-// Budget tiers for "Wedding + Engagement" events.
-const WEDDING_ENGAGEMENT_BUDGET_OPTIONS = [
-  '₹1 Lakh – ₹1.5 Lakhs',
-  '₹1.5 Lakhs – ₹2 Lakhs',
-  '₹2 Lakhs – ₹2.5 Lakhs',
-  '₹2.5 Lakhs – ₹3 Lakhs',
+// Budget tiers for Wedding and "Wedding + Engagement" events.
+const WEDDING_BUDGET_OPTIONS = [
+  '₹50,000 – ₹1 Lakh',
+  '₹1 Lakh – ₹2 Lakhs',
+  '₹2 Lakhs – ₹3 Lakhs',
   '₹3 Lakhs & Above',
 ];
 // Budget tiers shown only when the event type is "Other".
 const OTHER_BUDGET_OPTIONS = ['₹25,000 – ₹50,000', '₹50,000 – ₹1 Lakh', '₹1 Lakh & Above'];
-// Original budget ranges, preserved for "Wedding" or "Engagement" alone.
-const BUDGET_OPTIONS = ['₹50,000 – ₹1 Lakh', '₹1 Lakh – ₹2 Lakhs', '₹2 Lakhs – ₹3 Lakhs', '₹3 Lakhs & Above'];
+// Budget tiers for Engagement alone.
+const ENGAGEMENT_BUDGET_OPTIONS = ['₹50,000 – ₹1 Lakh', '₹1 Lakh – ₹2 Lakhs', '₹2 Lakhs – ₹3 Lakhs', '₹3 Lakhs & Above'];
 const COUNTRY_CODES = [
   { code: '+91', flag: '🇮🇳', label: 'IN' },
   { code: '+1', flag: '🇺🇸', label: 'US' },
@@ -38,7 +37,7 @@ const STEPS = ['eventType', 'eventDate', 'budget', 'fullName', 'email', 'whatsAp
 export default function Contact() {
   const [stepIndex, setStepIndex] = useState(0);
   const [form, setForm] = useState<FormState>({
-    eventType: '',
+    eventType: 'Wedding + Engagement',
     eventOther: '',
     eventDate: '',
     budget: '',
@@ -52,12 +51,12 @@ export default function Contact() {
 
   const step = STEPS[stepIndex];
   const progress = ((stepIndex + 1) / STEPS.length) * 100;
-  // Conditional budget tiers based on event type: "Wedding + Engagement" gets custom tiers.
-  const budgetOptions = form.eventType === 'Wedding + Engagement'
-    ? WEDDING_ENGAGEMENT_BUDGET_OPTIONS
+  // Both "Wedding" and "Wedding + Engagement" use WEDDING_BUDGET_OPTIONS.
+  const budgetOptions = (form.eventType === 'Wedding' || form.eventType === 'Wedding + Engagement')
+    ? WEDDING_BUDGET_OPTIONS
     : form.eventType === 'Other'
       ? OTHER_BUDGET_OPTIONS
-      : BUDGET_OPTIONS;
+      : ENGAGEMENT_BUDGET_OPTIONS;
 
   // Keep a ref in sync so deferred advances (radio auto-next) always see
   // the latest form values instead of a stale closure.
