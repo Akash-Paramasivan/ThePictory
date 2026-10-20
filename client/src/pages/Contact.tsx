@@ -5,15 +5,16 @@ import { ApiError } from '../api/client';
 const EVENT_TYPES = ['Wedding', 'Engagement', 'Wedding + Engagement', 'Other'];
 // Budget tiers for Wedding and "Wedding + Engagement" events.
 const WEDDING_BUDGET_OPTIONS = [
-  '₹50,000 – ₹1 Lakh',
-  '₹1 Lakh – ₹2 Lakhs',
-  '₹2 Lakhs – ₹3 Lakhs',
-  '₹3 Lakhs & Above',
+  '₹1 Lakh – ₹1.5 Lakhs',
+  '₹1.5 Lakhs – ₹2 Lakhs',
+  '₹2 Lakhs – ₹2.5 Lakhs',
+  '₹2.5 Lakhs – ₹3 Lakhs',
+  '₹3 Lakhs & above',
 ];
 // Budget tiers shown only when the event type is "Other".
-const OTHER_BUDGET_OPTIONS = ['₹25,000 – ₹50,000', '₹50,000 – ₹1 Lakh', '₹1 Lakh & Above'];
+const OTHER_BUDGET_OPTIONS = ['₹25,000 – ₹50,000', '₹50,000 – ₹1 Lakh', '₹1 Lakh & above'];
 // Budget tiers for Engagement alone.
-const ENGAGEMENT_BUDGET_OPTIONS = ['₹50,000 – ₹1 Lakh', '₹1 Lakh – ₹2 Lakhs', '₹2 Lakhs – ₹3 Lakhs', '₹3 Lakhs & Above'];
+const ENGAGEMENT_BUDGET_OPTIONS = ['₹50,000 – ₹1 Lakh', '₹1 Lakh – ₹2 Lakhs', '₹2 Lakhs – ₹3 Lakhs', '₹3 Lakhs & above'];
 const COUNTRY_CODES = [
   { code: '+91', flag: '🇮🇳', label: 'IN' },
   { code: '+1', flag: '🇺🇸', label: 'US' },
@@ -246,7 +247,7 @@ export default function Contact() {
   return (
     <div className="mx-auto max-w-xl px-4 sm:px-6 py-16 min-h-[70vh] flex flex-col">
       <h1 className="font-sans font-bold text-xl sm:text-2xl text-center text-charcoal mb-10 leading-snug max-w-lg mx-auto">
-        Get a FREE Pre-Wedding Photoshoot, Cinematic Reel & Luxury Magazine with your wedding photography booking.
+        Get a FREE Pre-Wedding Shoot, Cinematic Reel & Luxury Magazine!
       </h1>
       <div className="h-px w-full bg-charcoal/10 mb-12">
         <div className="h-px bg-charcoal transition-all" style={{ width: `${progress}%` }} />
