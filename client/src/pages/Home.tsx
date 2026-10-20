@@ -6,7 +6,7 @@ import OfferCard from '../components/OfferCard';
 import OfferBanner from '../components/OfferBanner';
 import SmartImage from '../components/SmartImage';
 import { useSiteSettings } from '../context/SiteSettingsContext';
-import { getYouTubeBackgroundEmbedUrl } from '../lib/youtube';
+import { getShowcaseEmbedConfig } from '../lib/embeds';
 
 export default function Home() {
   const [heroImages, setHeroImages] = useState<MediaItem[]>([]);
@@ -35,7 +35,7 @@ export default function Home() {
     }
   }, [offersPageEnabled]);
 
-  const videoEmbedUrl = homepageVideoUrl ? getYouTubeBackgroundEmbedUrl(homepageVideoUrl) : null;
+  const embedConfig = homepageVideoUrl ? getShowcaseEmbedConfig(homepageVideoUrl) : null;
   const [slideIndex, setSlideIndex] = useState(0);
   const thumbStripRef = useRef<HTMLDivElement>(null);
 
@@ -180,18 +180,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Showcase video — chromeless YouTube embed.
-          youtube-nocookie.com hides the YouTube branding frame from casual view,
-          and controls=0 keeps the player chrome off so only the video shows. */}
-      {videoEmbedUrl && (
-        <section className="relative w-full aspect-video max-h-[85vh] overflow-hidden bg-charcoal">
+      {/* Showcase video — chromeless embed.
+          YouTube uses 16:9, Instagram Reels use 9:16. */}
+      {embedConfig && (
+        <section
+          className={`relative w-full overflow-hidden bg-charcoal mx-auto ${
+            embedConfig.aspectRatio === '16/9' ? 'aspect-video max-h-[85vh]' :
+            embedConfig.aspectRatio === '9/16' ? 'aspect-[9/16] max-h-[85vh] max-w-[450px]' :
+            'aspect-auto'
+          }`}
+        >
           <iframe
-            src={videoEmbedUrl}
+            src={embedConfig.url}
             title="Showcase"
             allow="autoplay; encrypted-media; fullscreen"
             allowFullScreen
             className="absolute inset-0 w-full h-full"
             style={{ border: 'none', opacity: 0.95 }}
+            scrolling="no"
           />
         </section>
       )}

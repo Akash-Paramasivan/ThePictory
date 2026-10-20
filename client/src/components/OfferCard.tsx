@@ -1,4 +1,4 @@
-import { getYouTubeEmbedUrl } from '../lib/youtube';
+import { getYouTubeEmbedUrl } from '../lib/embeds';
 import type { Offer } from '../api/offers';
 import SmartImage from './SmartImage';
 import VideoPlayer from './VideoPlayer';

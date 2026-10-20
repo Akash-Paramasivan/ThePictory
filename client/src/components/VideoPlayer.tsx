@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getYouTubeEmbedUrl } from '../lib/youtube';
+import { getYouTubeEmbedUrl } from '../lib/embeds';
 
 export default function VideoPlayer({ url }: { url: string }) {
   const containerRef = useRef<HTMLDivElement>(null);

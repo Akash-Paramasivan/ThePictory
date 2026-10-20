@@ -112,13 +112,13 @@ export default function SettingsAdmin() {
         <div>
           <p className="font-medium">Homepage showcase video</p>
           <p className="text-sm text-neutral-500">
-            Paste a YouTube link to show an auto-playing showcase video on the homepage. Leave blank to hide it.
+            Paste a YouTube video link or an Instagram Reel/Post link to show an auto-playing showcase video on the homepage. Leave blank to hide it.
           </p>
         </div>
         <input
           value={homepageVideoUrl}
           onChange={(e) => setHomepageVideoUrl(e.target.value)}
-          placeholder="https://www.youtube.com/watch?v=..."
+          placeholder="YouTube or Instagram URL..."
           className="w-full rounded-md border border-neutral-300 px-3 py-2"
         />
         {error && <p className="text-red-600 text-sm">{error}</p>}
