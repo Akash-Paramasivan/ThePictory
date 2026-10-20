@@ -16,7 +16,8 @@ public class MediaController : ControllerBase
     {
         "image/jpeg", "image/png", "image/webp"
     };
-    private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
+    private const long MaxFileSizeBytes = 15 * 1024 * 1024; // 15 MB per file limit on backend
+    private const long MaxTotalRequestSizeBytes = 100 * 1024 * 1024; // 100 MB total request limit for bulk upload
 
     private readonly ApplicationDbContext _db;
     private readonly ICloudinaryService _cloudinaryService;
@@ -44,20 +45,13 @@ public class MediaController : ControllerBase
 
     [Authorize]
     [HttpPost("upload")]
-    [RequestSizeLimit(MaxFileSizeBytes)]
-    public async Task<ActionResult<MediaItemDto>> Upload([FromForm] IFormFile file, [FromForm] int categoryId, [FromForm] string title, [FromForm] string? description, CancellationToken ct)
+    [RequestSizeLimit(MaxTotalRequestSizeBytes)]
+    [RequestFormLimits(MultipartBodyLengthLimit = MaxTotalRequestSizeBytes)]
+    public async Task<ActionResult<List<MediaItemDto>>> Upload([FromForm] List<IFormFile> files, [FromForm] int categoryId, [FromForm] string? title, [FromForm] string? description, CancellationToken ct)
     {
-        if (file.Length == 0)
+        if (files is null || files.Count == 0)
         {
-            return BadRequest(new { message = "No file provided." });
-        }
-        if (file.Length > MaxFileSizeBytes)
-        {
-            return BadRequest(new { message = "File exceeds the 10 MB limit." });
-        }
-        if (!AllowedContentTypes.Contains(file.ContentType))
-        {
-            return BadRequest(new { message = "Only JPEG, PNG, or WEBP images are allowed." });
+            return BadRequest(new { message = "No files provided." });
         }
 
         var categoryExists = await _db.Categories.AnyAsync(c => c.Id == categoryId, ct);
@@ -66,27 +60,56 @@ public class MediaController : ControllerBase
             return BadRequest(new { message = "Invalid category." });
         }
 
-        await using var stream = file.OpenReadStream();
-        var (url, publicId) = await _cloudinaryService.UploadImageAsync(stream, file.FileName, ct);
+        var results = new List<MediaItemDto>();
+        var currentMaxSort = await _db.MediaItems.Where(m => m.CategoryId == categoryId).Select(m => (int?)m.SortOrder).MaxAsync(ct) ?? 0;
 
-        var maxSort = await _db.MediaItems.Where(m => m.CategoryId == categoryId).Select(m => (int?)m.SortOrder).MaxAsync(ct) ?? 0;
-        var mediaItem = new MediaItem
+        foreach (var file in files)
         {
-            CategoryId = categoryId,
-            Title = title.Trim(),
-            Description = description?.Trim(),
-            CloudinaryUrl = url,
-            CloudinaryPublicId = publicId,
-            SortOrder = maxSort + 1,
-            IsSlide = false,
-            SlideOrder = 0,
-            IsHero = false,
-            IsTestimonial = false
-        };
-        _db.MediaItems.Add(mediaItem);
-        await _db.SaveChangesAsync(ct);
+            if (file.Length == 0) continue;
+            if (file.Length > MaxFileSizeBytes)
+            {
+                return BadRequest(new { message = $"File '{file.FileName}' exceeds the 15 MB limit." });
+            }
+            if (!AllowedContentTypes.Contains(file.ContentType))
+            {
+                return BadRequest(new { message = $"File '{file.FileName}' has an unsupported format. Only JPEG, PNG, or WEBP images are allowed." });
+            }
 
-        return CreatedAtAction(nameof(GetAll), new MediaItemDto(mediaItem.Id, mediaItem.CategoryId, null, mediaItem.Title, mediaItem.Description, mediaItem.CloudinaryUrl, mediaItem.SortOrder, mediaItem.IsFeatured, mediaItem.IsSlide, mediaItem.SlideOrder, mediaItem.IsHero, mediaItem.IsTestimonial, mediaItem.CreatedAt));
+            await using var stream = file.OpenReadStream();
+            var (url, publicId) = await _cloudinaryService.UploadImageAsync(stream, file.FileName, ct);
+
+            currentMaxSort++;
+            // Use file name without extension as default title if multiple files or no specific title given
+            var fileTitle = !string.IsNullOrWhiteSpace(title) && files.Count == 1
+                ? title.Trim()
+                : Path.GetFileNameWithoutExtension(file.FileName);
+
+            if (string.IsNullOrWhiteSpace(fileTitle))
+            {
+                fileTitle = "Untitled Photo";
+            }
+
+            var mediaItem = new MediaItem
+            {
+                CategoryId = categoryId,
+                Title = fileTitle,
+                Description = description?.Trim(),
+                CloudinaryUrl = url,
+                CloudinaryPublicId = publicId,
+                SortOrder = currentMaxSort,
+                IsSlide = false,
+                SlideOrder = 0,
+                IsHero = false,
+                IsTestimonial = false
+            };
+            _db.MediaItems.Add(mediaItem);
+            await _db.SaveChangesAsync(ct);
+
+            var categoryName = await _db.Categories.Where(c => c.Id == categoryId).Select(c => c.Name).FirstOrDefaultAsync(ct);
+            results.Add(new MediaItemDto(mediaItem.Id, mediaItem.CategoryId, categoryName, mediaItem.Title, mediaItem.Description, mediaItem.CloudinaryUrl, mediaItem.SortOrder, mediaItem.IsFeatured, mediaItem.IsSlide, mediaItem.SlideOrder, mediaItem.IsHero, mediaItem.IsTestimonial, mediaItem.CreatedAt));
+        }
+
+        return Ok(results);
     }
 
     [Authorize]

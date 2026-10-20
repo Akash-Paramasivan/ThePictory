@@ -25,7 +25,7 @@ export function getMedia(params?: { categoryId?: number; featuredOnly?: boolean 
 }
 
 export function uploadMedia(form: FormData) {
-  return apiFetch<MediaItem>('/api/media/upload', {
+  return apiFetch<MediaItem[]>('/api/media/upload', {
     method: 'POST',
     auth: true,
     body: form,
