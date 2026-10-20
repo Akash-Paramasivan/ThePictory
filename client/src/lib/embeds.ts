@@ -5,9 +5,10 @@ export function extractYouTubeId(url: string): string | null {
   return match[1];
 }
 
-/** Extracts the post/reel id from Instagram URLs. */
+/** Extracts the post/reel id from Instagram URLs (handles query strings). */
 export function extractInstagramId(url: string): string | null {
-  const match = url.match(/(?:instagram\.com\/(?:reel\/|p\/))([\w-]{6,20})/i);
+  const cleanUrl = url.split('?')[0]; // Strip query for ID extraction
+  const match = cleanUrl.match(/instagram\.com\/(?:reel\/|p\/)([\w-]{6,20})/i);
   if (!match) return null;
   return match[1];
 }

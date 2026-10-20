@@ -31,7 +31,17 @@ public class SettingsController : ControllerBase
     {
         if (!string.IsNullOrWhiteSpace(request.HomepageVideoUrl) && !YouTubeUrlValidator.IsValid(request.HomepageVideoUrl))
         {
-            return BadRequest(new { message = "A valid YouTube or Instagram URL is required." });
+            return BadRequest(new { message = "A valid YouTube or Instagram Reel/Post URL is required." });
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.InstagramUrl) && !YouTubeUrlValidator.IsValidSocialProfile(request.InstagramUrl))
+        {
+            return BadRequest(new { message = "A valid Instagram profile URL is required." });
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.YoutubeProfileUrl) && !YouTubeUrlValidator.IsValidSocialProfile(request.YoutubeProfileUrl))
+        {
+            return BadRequest(new { message = "A valid YouTube profile URL is required." });
         }
 
         var settings = await GetOrCreateSettingsAsync(ct);

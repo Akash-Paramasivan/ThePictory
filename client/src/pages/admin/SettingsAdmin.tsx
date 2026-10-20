@@ -9,6 +9,15 @@ function isValidShowcaseUrl(url: string): boolean {
   return extractYouTubeId(url) !== null || extractInstagramId(url) !== null;
 }
 
+/** Returns true if the URL is blank or a valid social profile URL (YouTube channel or Instagram profile). */
+function isValidSocialProfile(url: string): boolean {
+  if (!url.trim()) return true;
+  const clean = url.split('?')[0];
+  const isInstagramProfile = /instagram\.com\/([a-zA-Z0-9_.-]+)\/?$/i.test(clean);
+  const isYouTubeChannel = /youtube\.com\/(?:channel\/[\w-]+|@[\w.-]+|user\/[\w.-]+|c\/[\w.-]+)\/?$/i.test(clean);
+  return isInstagramProfile || isYouTubeChannel;
+}
+
 export default function SettingsAdmin() {
   const [offersPageEnabled, setOffersPageEnabled] = useState(false);
   const [homepageVideoUrl, setHomepageVideoUrl] = useState('');
@@ -16,7 +25,8 @@ export default function SettingsAdmin() {
   const [youtubeProfileUrl, setYoutubeProfileUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const [socialError, setSocialError] = useState<string | null>(null);
 
   useEffect(() => {
     getSiteSettings()
@@ -48,11 +58,11 @@ export default function SettingsAdmin() {
   const handleVideoSave = async (e: FormEvent) => {
     e.preventDefault();
     if (!isValidShowcaseUrl(homepageVideoUrl)) {
-      setError('Please enter a valid YouTube or Instagram Reel/Post URL.');
+      setVideoError('Please enter a valid YouTube or Instagram Reel/Post URL.');
       return;
     }
     setSaving(true);
-    setError(null);
+    setVideoError(null);
     try {
       const result = await updateSiteSettings(
         offersPageEnabled,
@@ -62,7 +72,7 @@ export default function SettingsAdmin() {
       );
       setHomepageVideoUrl(result.homepageVideoUrl ?? '');
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to save video URL.');
+      setVideoError(err instanceof ApiError ? err.message : 'Failed to save video URL.');
     } finally {
       setSaving(false);
     }
@@ -70,8 +80,16 @@ export default function SettingsAdmin() {
 
   const handleSaveSocials = async (e: FormEvent) => {
     e.preventDefault();
+    if (!isValidSocialProfile(instagramUrl)) {
+      setSocialError('Please enter a valid Instagram profile URL.');
+      return;
+    }
+    if (!isValidSocialProfile(youtubeProfileUrl)) {
+      setSocialError('Please enter a valid YouTube profile URL.');
+      return;
+    }
     setSaving(true);
-    setError(null);
+    setSocialError(null);
     try {
       const result = await updateSiteSettings(
         offersPageEnabled,
@@ -82,7 +100,7 @@ export default function SettingsAdmin() {
       setInstagramUrl(result.instagramUrl ?? '');
       setYoutubeProfileUrl(result.youtubeProfileUrl ?? '');
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to save social profile URLs.');
+      setSocialError(err instanceof ApiError ? err.message : 'Failed to save social profile URLs.');
     } finally {
       setSaving(false);
     }
@@ -107,7 +125,7 @@ export default function SettingsAdmin() {
           onClick={handleToggle}
           disabled={saving}
           aria-pressed={offersPageEnabled}
-          className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors flex-shrink-0 ${
+          className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors shrink-0 ${
             offersPageEnabled ? 'bg-neutral-900' : 'bg-neutral-300'
           } disabled:opacity-50`}
         >
@@ -132,7 +150,7 @@ export default function SettingsAdmin() {
           placeholder="YouTube or Instagram URL..."
           className="w-full rounded-md border border-neutral-300 px-3 py-2"
         />
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {videoError && <p className="text-red-600 text-sm">{videoError}</p>}
         <button
           type="submit"
           disabled={saving}
@@ -167,7 +185,7 @@ export default function SettingsAdmin() {
           placeholder="https://www.youtube.com/@yourchannel/"
           className="w-full rounded-md border border-neutral-300 px-3 py-2"
         />
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {socialError && <p className="text-red-600 text-sm">{socialError}</p>}
         <button
           type="submit"
           disabled={saving}
