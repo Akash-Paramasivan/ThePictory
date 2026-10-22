@@ -183,7 +183,7 @@ export default function Contact() {
       ].join('\n');
 
       try { sessionStorage.setItem('offer-banner', 'pending'); } catch { /* sessionStorage unavailable */ }
-      window.location.href = `https://wa.me/916380630219?text=${encodeURIComponent(message)}`;
+      window.location.href = `https://wa.me/917708193339?text=${encodeURIComponent(message)}`;
     } catch (err) {
       console.error('[Contact] submit failed:', err);
       if (err instanceof ApiError) {
@@ -217,7 +217,7 @@ export default function Contact() {
       `Email: ${form.email.trim()}`,
       `WhatsApp: ${form.whatsAppCountryCode} ${form.whatsAppNumber.trim()}`,
     ].join('\n');
-    const waUrl = `https://wa.me/916380630219?text=${encodeURIComponent(message)}`;
+    const waUrl = `https://wa.me/917708193339?text=${encodeURIComponent(message)}`;
     return (
       <div className="mx-auto max-w-xl px-4 sm:px-6 py-20 text-center">
         <div className="border border-blush-dark bg-blush text-charcoal p-8 mb-6">
