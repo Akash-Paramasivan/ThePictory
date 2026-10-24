@@ -27,6 +27,14 @@ export function getGalleryData() {
   return apiFetch<GalleryResponse>('/api/gallery');
 }
 
+export function uploadHeroImage(form: FormData) {
+  return apiFetch<GalleryItem>('/api/gallery/hero', {
+    method: 'POST',
+    auth: true,
+    body: form,
+  });
+}
+
 export function uploadGalleryImages(form: FormData) {
   return apiFetch<GalleryItem[]>('/api/gallery/bulk-upload', {
     method: 'POST',

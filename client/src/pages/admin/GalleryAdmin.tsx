@@ -2,8 +2,8 @@ import { useEffect, useState, type FormEvent } from 'react';
 import imageCompression from 'browser-image-compression';
 import {
   getGalleryData,
+  uploadHeroImage,
   uploadGalleryImages,
-  setGalleryCover,
   deleteGalleryItem,
   getTestimonials,
   addTestimonial,
@@ -17,6 +17,13 @@ export default function GalleryAdmin() {
   const [heroImage, setHeroImage] = useState<GalleryItem | null>(null);
   const [photos, setPhotos] = useState<GalleryItem[]>([]);
   const [testimonials, setTestimonials] = useState<TestimonialVideo[]>([]);
+
+  // Hero upload state
+  const [heroFile, setHeroFile] = useState<File | null>(null);
+  const [heroUploading, setHeroUploading] = useState(false);
+  const [heroError, setHeroError] = useState<string | null>(null);
+
+  // Gallery bulk upload state
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string>('');
@@ -45,6 +52,65 @@ export default function GalleryAdmin() {
   useEffect(() => {
     loadData();
   }, []);
+
+  const handleHeroFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setHeroFile(e.target.files[0]);
+    } else {
+      setHeroFile(null);
+    }
+  };
+
+  const handleHeroUpload = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!heroFile) return;
+    setHeroUploading(true);
+    setHeroError(null);
+
+    try {
+      let processedFile = heroFile;
+      try {
+        const options = {
+          maxSizeMB: 8,
+          maxWidthOrHeight: 2560,
+          initialQuality: 0.85,
+          useWebWorker: true,
+        };
+        const compressed = await imageCompression(heroFile, options);
+        processedFile = new File([compressed], heroFile.name, {
+          type: compressed.type || heroFile.type,
+          lastModified: Date.now(),
+        });
+      } catch {
+        // use original if compression fails
+      }
+
+      const form = new FormData();
+      form.append('file', processedFile);
+
+      await uploadHeroImage(form);
+      setHeroFile(null);
+      const inputEl = document.getElementById('hero-file-input') as HTMLInputElement;
+      if (inputEl) inputEl.value = '';
+
+      await loadData();
+    } catch (err) {
+      setHeroError(err instanceof ApiError ? err.message : 'Hero upload failed.');
+    } finally {
+      setHeroUploading(false);
+    }
+  };
+
+  const handleRemoveHero = async () => {
+    if (!heroImage) return;
+    if (!confirm('Remove current hero cover photo?')) return;
+    try {
+      await deleteGalleryItem(heroImage.id);
+      await loadData();
+    } catch (err) {
+      alert(err instanceof ApiError ? err.message : 'Failed to remove hero cover.');
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -103,15 +169,6 @@ export default function GalleryAdmin() {
     }
   };
 
-  const handleSetCover = async (id: number) => {
-    try {
-      await setGalleryCover(id);
-      await loadData();
-    } catch (err) {
-      alert(err instanceof ApiError ? err.message : 'Failed to set cover.');
-    }
-  };
-
   const handleDeletePhoto = async (id: number) => {
     if (!confirm('Delete this photo from Gallery?')) return;
     try {
@@ -162,25 +219,75 @@ export default function GalleryAdmin() {
         <p className="text-stone-500 text-sm">Manage the standalone editorial gallery at `/gallery` and client video stories.</p>
       </div>
 
-      {/* Gallery Bulk Upload & Cover Section */}
+      {/* Card 1: Hero Cover Photo (Single Upload) */}
       <div className="bg-white p-6 rounded-lg border border-neutral-200 shadow-sm space-y-6">
-        <h2 className="text-lg font-medium">Gallery Photos & Hero Cover</h2>
+        <div>
+          <h2 className="text-lg font-medium">Hero Cover Photo</h2>
+          <p className="text-stone-500 text-sm mt-0.5">Upload a single full-width cover photo for the top of the /gallery page.</p>
+        </div>
 
-        {heroImage && (
-          <div className="p-4 bg-stone-50 rounded-lg border border-stone-200 flex items-center justify-between">
+        {heroImage ? (
+          <div className="p-4 bg-stone-50 rounded-lg border border-stone-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <img src={heroImage.imageUrl} alt={heroImage.title} className="w-24 h-16 object-cover rounded" />
+              <img src={heroImage.imageUrl} alt={heroImage.title} className="w-32 h-20 object-cover rounded shadow-sm" />
               <div>
-                <span className="text-xs uppercase tracking-wider bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-medium">Current Hero Cover</span>
+                <span className="text-xs uppercase tracking-wider bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-medium">Active Hero Cover</span>
                 <p className="font-medium text-sm mt-1">{heroImage.title}</p>
               </div>
             </div>
+            <button
+              type="button"
+              onClick={handleRemoveHero}
+              className="text-xs px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded font-medium transition"
+            >
+              Remove Hero
+            </button>
           </div>
+        ) : (
+          <p className="text-stone-400 text-sm italic">No hero cover photo uploaded yet.</p>
         )}
+
+        <form onSubmit={handleHeroUpload} className="space-y-4 pt-2 border-t border-stone-100">
+          <div>
+            <label className="block text-sm font-medium mb-1">Select New Hero Cover Photo</label>
+            <input
+              id="hero-file-input"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              required
+              onChange={handleHeroFileChange}
+              className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-neutral-900 file:text-white hover:file:bg-neutral-800 cursor-pointer"
+            />
+          </div>
+
+          {heroUploading && (
+            <div className="bg-neutral-50 p-3 rounded-md border border-neutral-200 flex items-center gap-3">
+              <div className="w-4 h-4 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-xs font-medium text-neutral-900">Uploading hero cover...</p>
+            </div>
+          )}
+
+          {heroError && <p className="text-red-600 text-sm bg-red-50 p-3 rounded-md">{heroError}</p>}
+
+          <button
+            type="submit"
+            disabled={heroUploading || !heroFile}
+            className="rounded-md bg-neutral-900 text-white px-6 py-2.5 text-sm font-medium disabled:opacity-50 hover:bg-neutral-800 transition"
+          >
+            {heroUploading ? 'Uploading...' : 'Upload Hero Cover'}
+          </button>
+        </form>
+      </div>
+
+      {/* Card 2: Gallery Photos (Bulk Upload) */}
+      <div className="bg-white p-6 rounded-lg border border-neutral-200 shadow-sm space-y-6">
+        <div>
+          <h2 className="text-lg font-medium">Gallery Photos</h2>
+          <p className="text-stone-500 text-sm mt-0.5">Bulk upload photos for the editorial masonry grid on the /gallery page.</p>
+        </div>
 
         <form onSubmit={handleUpload} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Bulk Upload Gallery Photos</label>
             <input
               id="gallery-file-input"
               type="file"
@@ -214,7 +321,7 @@ export default function GalleryAdmin() {
         </form>
 
         {/* Photos Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 pt-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 pt-4 border-t border-stone-100">
           {photos.map((photo) => (
             <div key={photo.id} className="bg-white rounded-lg border border-neutral-200 overflow-hidden shadow-sm flex flex-col justify-between">
               <div>
@@ -223,14 +330,7 @@ export default function GalleryAdmin() {
                   <p className="font-medium truncate text-sm" title={photo.title}>{photo.title}</p>
                 </div>
               </div>
-              <div className="p-3 border-t border-neutral-100 flex items-center justify-between bg-neutral-50">
-                <button
-                  type="button"
-                  onClick={() => handleSetCover(photo.id)}
-                  className="text-xs px-2.5 py-1 bg-stone-200 hover:bg-stone-300 rounded text-stone-800 font-medium"
-                >
-                  Set as Hero Cover
-                </button>
+              <div className="p-3 border-t border-neutral-100 flex justify-end bg-neutral-50">
                 <button
                   type="button"
                   onClick={() => handleDeletePhoto(photo.id)}
@@ -245,9 +345,12 @@ export default function GalleryAdmin() {
         {photos.length === 0 && <p className="text-stone-400 text-sm py-4 text-center">No gallery photos added yet.</p>}
       </div>
 
-      {/* Testimonials Manager Section */}
+      {/* Card 3: Client Testimonials Manager Section */}
       <div className="bg-white p-6 rounded-lg border border-neutral-200 shadow-sm space-y-6">
-        <h2 className="text-lg font-medium">Client Testimonial Videos (YouTube)</h2>
+        <div>
+          <h2 className="text-lg font-medium">Client Testimonial Videos (YouTube)</h2>
+          <p className="text-stone-500 text-sm mt-0.5">Add client story and couple testimonial videos.</p>
+        </div>
 
         <form onSubmit={handleAddTestimonial} className="grid gap-4 sm:grid-cols-3">
           <div className="sm:col-span-2">
@@ -292,7 +395,7 @@ export default function GalleryAdmin() {
           </div>
         </form>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-stone-100">
           {testimonials.map((test) => (
             <div key={test.id} className="bg-stone-50 rounded-lg border border-stone-200 p-4 flex flex-col justify-between">
               <div>
