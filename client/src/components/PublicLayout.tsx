@@ -2,14 +2,14 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import OfferBanner from './OfferBanner';
+import GalleryFooter from './GalleryFooter';
 
 /**
- * Ad-traffic landing isolation: the /contact route must not offer any
- * navigation exits, so the header (logo + nav links) and the full footer
- * are suppressed there only. Every other public route keeps the regular
- * chrome untouched.
+ * Chrome-free (distraction-free) routes: the /contact and /gallery routes
+ * suppress the standard header navigation bar and the full site footer to
+ * keep the experience clean and focused.
  */
-const CHROME_FREE_ROUTES = ['/contact'];
+const CHROME_FREE_ROUTES = ['/contact', '/gallery'];
 
 export default function PublicLayout() {
   const { pathname } = useLocation();
@@ -22,7 +22,7 @@ export default function PublicLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
-      {hideChrome ? <ContactFooter /> : <Footer />}
+      {hideChrome ? (pathname === '/gallery' ? <GalleryFooter /> : <ContactFooter />) : <Footer />}
     </div>
   );
 }
