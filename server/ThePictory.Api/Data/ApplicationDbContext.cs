@@ -18,6 +18,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
     public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
     public DbSet<Movie> Movies => Set<Movie>();
+    public DbSet<GalleryItem> GalleryItems => Set<GalleryItem>();
+    public DbSet<TestimonialVideo> TestimonialVideos => Set<TestimonialVideo>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +37,10 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<AdminUser>()
             .HasIndex(a => a.Username)
+            .IsUnique();
+
+        modelBuilder.Entity<GalleryItem>()
+            .HasIndex(g => g.Title)
             .IsUnique();
 
         modelBuilder.Entity<AdminOtpCode>()

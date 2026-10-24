@@ -27,6 +27,24 @@ public static partial class YouTubeUrlValidator
         return YouTubePattern().IsMatch(trimmed) || InstagramPattern().IsMatch(trimmed);
     }
 
+    public static string Clean(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url)) return string.Empty;
+        var trimmed = url.Trim();
+
+        // Strip tracking parameters like ?si=... from YouTube URLs
+        var queryIndex = trimmed.IndexOf('?');
+        if (queryIndex >= 0)
+        {
+            trimmed = trimmed.Substring(0, queryIndex);
+        }
+
+        // Strip trailing slash
+        trimmed = trimmed.TrimEnd('/');
+
+        return trimmed;
+    }
+
     public static bool IsYouTubeUrl(string? url)
     {
         if (string.IsNullOrWhiteSpace(url)) return false;

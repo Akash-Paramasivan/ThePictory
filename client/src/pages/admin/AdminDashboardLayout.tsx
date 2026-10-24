@@ -6,6 +6,7 @@ const links = [
   { to: '/admin', label: 'Overview', end: true },
   { to: '/admin/categories', label: 'Categories' },
   { to: '/admin/media', label: 'Media' },
+  { to: '/admin/gallery', label: 'Gallery & Testimonials' },
   { to: '/admin/offers', label: 'Offers' },
   { to: '/admin/blog', label: 'Blog' },
   { to: '/admin/movies', label: 'Movies' },
