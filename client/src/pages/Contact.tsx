@@ -64,6 +64,7 @@ export default function Contact() {
   const formRef = useRef(form);
   useEffect(() => { formRef.current = form; }, [form]);
 
+
   // Stateless validation reading LIVE form state (not the ref) so it
   // re-evaluates on every keystroke — the NEXT/SUBMIT button enables the
   // moment a step becomes valid, with no blur/Enter/trailing-space needed.
@@ -160,15 +161,6 @@ export default function Contact() {
       await submitContactForm(payload);
       setStatus('success');
 
-      // Fire Meta Pixel Lead event on successful submission.
-      const win = window as Window & { fbq?: (...args: (string | Record<string, unknown>)[]) => void };
-      if (win.fbq) {
-        win.fbq('track', 'Lead', {
-          content_name: 'Contact Form Submission',
-          event_type: eventType,
-          budget: currentForm.budget,
-        });
-      }
 
       // Hand off to WhatsApp with the enquiry pre-filled using the exact requested template.
       const message = [

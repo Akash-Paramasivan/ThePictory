@@ -1,4 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import OfferBanner from './OfferBanner';
@@ -14,6 +15,13 @@ const CHROME_FREE_ROUTES = ['/contact', '/gallery'];
 export default function PublicLayout() {
   const { pathname } = useLocation();
   const hideChrome = CHROME_FREE_ROUTES.includes(pathname);
+
+  useEffect(() => {
+    const win = window as Window & { fbq?: (...args: (string | Record<string, unknown>)[]) => void };
+    if (win.fbq) {
+      win.fbq('track', 'PageView');
+    }
+  }, [pathname]);
 
   return (
     <div className="min-h-screen flex flex-col">

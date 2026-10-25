@@ -30,6 +30,15 @@ export default function GalleryPage() {
   const touchStartY = useRef<number | null>(null);
 
   useEffect(() => {
+    const win = window as unknown as { fbq?: (...args: unknown[]) => void };
+    if (win.fbq && typeof win.fbq === 'function') {
+      win.fbq('track', 'Lead', {
+        content_name: 'Gallery Page',
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     let ignore = false;
     getGalleryData()
       .then((data) => {
