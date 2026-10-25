@@ -24,7 +24,6 @@ export default function GalleryPage() {
   // Lightbox extra controls
   const [isPlaying, setIsPlaying] = useState(false);
   const [favorites, setFavorites] = useState<Record<number, boolean>>({});
-  const [copiedNotification, setCopiedNotification] = useState(false);
 
   // Touch swipe handling
   const touchStartX = useRef<number | null>(null);
@@ -138,25 +137,6 @@ export default function GalleryPage() {
     setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleShare = async (photo: GalleryItem) => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: photo.title || 'The Pictory Gallery',
-          url: photo.imageUrl,
-        });
-        return;
-      } catch {
-        // Fallback to copy URL
-      }
-    }
-
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(photo.imageUrl);
-      setCopiedNotification(true);
-      setTimeout(() => setCopiedNotification(false), 2000);
-    }
-  };
 
   if (loading) {
     return (
@@ -330,12 +310,6 @@ export default function GalleryPage() {
               </svg>
             </button>
 
-            {/* Center: Image title or filename in subtle grey text */}
-            <div className="text-center px-4 truncate max-w-[50vw]">
-              <span className="text-xs tracking-wider uppercase text-stone-400 font-light truncate block">
-                {currentPhoto.title || `Photo ${lightboxIndex + 1} of ${photos.length}`}
-              </span>
-            </div>
 
             {/* Top-right: Minimalist icons for Favorite, Share, and Slideshow/Play */}
             <div className="flex items-center gap-3 sm:gap-4 -mr-2">
@@ -360,29 +334,6 @@ export default function GalleryPage() {
                 )}
               </button>
 
-              {/* Share icon */}
-              <button
-                type="button"
-                onClick={() => handleShare(currentPhoto)}
-                className="text-stone-600 hover:text-stone-900 p-2 rounded-full transition-colors"
-                title="Share photo"
-                aria-label="Share"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"
-                  />
-                </svg>
-              </button>
 
               {/* Favorite icon */}
               <button
@@ -412,12 +363,6 @@ export default function GalleryPage() {
             </div>
           </div>
 
-          {/* Copied toast notification */}
-          {copiedNotification && (
-            <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 bg-stone-900 text-white text-xs px-4 py-2 rounded-full shadow-lg">
-              Photo link copied to clipboard
-            </div>
-          )}
 
           {/* Main Stage: Photo Display and Desktop Nav Arrows */}
           <div className="relative flex-1 flex items-center justify-center p-4 sm:p-8 overflow-hidden">
@@ -456,10 +401,6 @@ export default function GalleryPage() {
             </button>
           </div>
 
-          {/* Bottom Bar: Photo counter info */}
-          <div className="h-10 px-6 flex items-center justify-center text-stone-400 text-xs font-light tracking-widest uppercase">
-            {lightboxIndex + 1} / {photos.length}
-          </div>
         </div>
       )}
     </div>
