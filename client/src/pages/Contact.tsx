@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { submitContactForm } from '../api/contact';
 import { ApiError } from '../api/client';
 
-const EVENT_TYPES = ['Wedding', 'Engagement', 'Wedding + Engagement', 'Other'];
-// Budget tiers for Wedding and "Wedding + Engagement" events.
+const EVENT_TYPES = ['Wedding', 'Engagement / Reception', 'Engagement / Reception + Wedding'];
+// Budget tiers for Wedding and "Engagement / Reception + Wedding" events.
 const WEDDING_BUDGET_OPTIONS = [
   '₹1 Lakh – ₹1.5 Lakhs',
   '₹1.5 Lakhs – ₹2 Lakhs',
@@ -11,9 +11,7 @@ const WEDDING_BUDGET_OPTIONS = [
   '₹2.5 Lakhs – ₹3 Lakhs',
   '₹3 Lakhs & above',
 ];
-// Budget tiers shown only when the event type is "Other".
-const OTHER_BUDGET_OPTIONS = ['₹25,000 – ₹50,000', '₹50,000 – ₹1 Lakh', '₹1 Lakh & above'];
-// Budget tiers for Engagement alone.
+// Budget tiers for Engagement / Reception alone.
 const ENGAGEMENT_BUDGET_OPTIONS = ['₹50,000 – ₹1 Lakh', '₹1 Lakh – ₹2 Lakhs', '₹2 Lakhs – ₹3 Lakhs', '₹3 Lakhs & above'];
 const COUNTRY_CODES = [
   { code: '+91', flag: '🇮🇳', label: 'IN' },
@@ -38,7 +36,7 @@ const STEPS = ['eventType', 'eventDate', 'budget', 'fullName', 'email', 'whatsAp
 export default function Contact() {
   const [stepIndex, setStepIndex] = useState(0);
   const [form, setForm] = useState<FormState>({
-    eventType: 'Wedding + Engagement',
+    eventType: 'Engagement / Reception + Wedding',
     eventOther: '',
     eventDate: '',
     budget: '',
@@ -52,12 +50,10 @@ export default function Contact() {
 
   const step = STEPS[stepIndex];
   const progress = ((stepIndex + 1) / STEPS.length) * 100;
-  // Both "Wedding" and "Wedding + Engagement" use WEDDING_BUDGET_OPTIONS.
-  const budgetOptions = (form.eventType === 'Wedding' || form.eventType === 'Wedding + Engagement')
+  // Both "Wedding" and "Engagement / Reception + Wedding" use WEDDING_BUDGET_OPTIONS.
+  const budgetOptions = (form.eventType === 'Wedding' || form.eventType === 'Engagement / Reception + Wedding')
     ? WEDDING_BUDGET_OPTIONS
-    : form.eventType === 'Other'
-      ? OTHER_BUDGET_OPTIONS
-      : ENGAGEMENT_BUDGET_OPTIONS;
+    : ENGAGEMENT_BUDGET_OPTIONS;
 
   // Keep a ref in sync so deferred advances (radio auto-next) always see
   // the latest form values instead of a stale closure.
@@ -71,7 +67,7 @@ export default function Contact() {
   const isStepValid = (f: FormState = form): boolean => {
     switch (step) {
       case 'eventType':
-        return f.eventType !== '' && (f.eventType !== 'Other' || f.eventOther.trim().length > 0);
+        return f.eventType !== '';
       case 'eventDate':
         return f.eventDate.trim().length > 0;
       case 'budget':
@@ -99,7 +95,6 @@ export default function Contact() {
     setForm((f) => ({
       ...f,
       eventType: value,
-      eventOther: value === 'Other' ? f.eventOther : '',
       budget: value === f.eventType ? f.budget : '',
     }));
     setError(null);
@@ -141,9 +136,7 @@ export default function Contact() {
     setStatus('submitting');
     setError(null);
 
-    const eventType = currentForm.eventType === 'Other'
-      ? `Other – ${currentForm.eventOther.trim()}`
-      : currentForm.eventType;
+    const eventType = currentForm.eventType;
 
     const payload = {
       eventType,
@@ -203,7 +196,7 @@ export default function Contact() {
       "Hi The Pictory! I'm interested in your wedding photography packages. Here are my event details:",
       '',
       `Name: ${form.fullName.trim()}`,
-      `Event: ${form.eventType === 'Other' ? `Other – ${form.eventOther.trim()}` : form.eventType}`,
+      `Event: ${form.eventType}`,
       `Event Date: ${form.eventDate.trim()}`,
       `Budget: ${form.budget}`,
       `Email: ${form.email.trim()}`,
@@ -253,27 +246,10 @@ export default function Contact() {
               options={EVENT_TYPES}
               value={form.eventType}
               onChange={handleEventTypeChange}
-              onSelect={(value) => {
-                if (value !== 'Other') setTimeout(goNext, 200);
+              onSelect={() => {
+                setTimeout(goNext, 200);
               }}
             />
-            {form.eventType === 'Other' && (
-              <div className="mt-6">
-                <label htmlFor="event-other" className="block font-sans font-bold text-2xl text-charcoal mb-6">
-                  Please specify your event <span className="text-charcoal-soft">*</span>
-                </label>
-                <input
-                  id="event-other"
-                  autoFocus
-                  value={form.eventOther}
-                  onChange={(e) => { setForm({ ...form, eventOther: e.target.value }); clearErrorOnInput(); }}
-                  onKeyDown={(e) => e.key === 'Enter' && goNext()}
-                  placeholder="Your answer here..."
-                  maxLength={90}
-                  className="w-full border-b-2 border-charcoal/20 focus:border-charcoal outline-none py-2 text-lg bg-transparent font-sans"
-                />
-              </div>
-            )}
           </>
         )}
         {step === 'eventDate' && (
