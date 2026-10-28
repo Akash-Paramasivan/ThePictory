@@ -376,7 +376,7 @@ export default function Contact() {
         {error && <p className="text-red-600 text-sm mt-4">{error}</p>}
       </div>
 
-      <div className="flex gap-3 mt-10">
+      <div className="flex gap-3 mt-6">
         {stepIndex > 0 && (
           <button
             type="button"
