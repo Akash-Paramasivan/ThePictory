@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -15,12 +16,21 @@ public class ContactController : ControllerBase
 {
     private readonly ApplicationDbContext _db;
     private readonly IEmailService _emailService;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IConfiguration _configuration;
     private readonly ILogger<ContactController> _logger;
 
-    public ContactController(ApplicationDbContext db, IEmailService emailService, ILogger<ContactController> logger)
+    public ContactController(
+        ApplicationDbContext db,
+        IEmailService emailService,
+        IHttpClientFactory httpClientFactory,
+        IConfiguration configuration,
+        ILogger<ContactController> logger)
     {
         _db = db;
         _emailService = emailService;
+        _httpClientFactory = httpClientFactory;
+        _configuration = configuration;
         _logger = logger;
     }
 
@@ -41,14 +51,50 @@ public class ContactController : ControllerBase
         _db.ContactSubmissions.Add(submission);
         await _db.SaveChangesAsync(ct);
 
+        var formattedWhatsApp = $"{submission.WhatsAppCountryCode} {submission.WhatsAppNumber}".Trim();
+
         try
         {
-            await _emailService.SendContactNotificationAsync(submission.FullName, submission.EventType, submission.PhotographyDays, submission.Budget, submission.Email, $"{submission.WhatsAppCountryCode} {submission.WhatsAppNumber}", ct);
+            await _emailService.SendContactNotificationAsync(
+                submission.FullName,
+                submission.EventType,
+                submission.PhotographyDays,
+                submission.Budget,
+                submission.Email,
+                formattedWhatsApp,
+                ct);
         }
         catch (Exception ex)
         {
             // Submission is already saved; admin can still see it in the portal even if the email failed.
             _logger.LogError(ex, "Failed to send contact notification email for submission {Id}", submission.Id);
+        }
+
+        // Append lead details to Google Sheets if WebhookUrl is configured
+        var webhookUrl = _configuration["GoogleSheets:WebhookUrl"];
+        if (!string.IsNullOrWhiteSpace(webhookUrl))
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient("GoogleSheets");
+                var payload = new
+                {
+                    name = submission.FullName,
+                    eventType = submission.EventType,
+                    eventDate = submission.PhotographyDays,
+                    budget = submission.Budget,
+                    email = submission.Email,
+                    whatsapp = formattedWhatsApp
+                };
+
+                using var response = await client.PostAsJsonAsync(webhookUrl, payload, ct);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                // Non-blocking: never fail the contact submission if Google Sheets is unreachable.
+                _logger.LogError(ex, "Failed to append contact submission {Id} to Google Sheets", submission.Id);
+            }
         }
 
         return Ok(new { message = "Thanks! We'll get back to you soon." });
