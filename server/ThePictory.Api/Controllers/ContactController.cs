@@ -84,7 +84,7 @@ public class ContactController : ControllerBase
                     ["eventDate"] = submission.PhotographyDays,
                     ["budget"] = submission.Budget,
                     ["email"] = submission.Email,
-                    ["whatsapp"] = formattedWhatsApp
+                    ["whatsapp"] = $"'{formattedWhatsApp}"
                 };
 
                 var requestUrl = QueryHelpers.AddQueryString(webhookUrl, queryParams);
