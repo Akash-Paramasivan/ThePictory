@@ -1,8 +1,7 @@
-using System.Text;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using ThePictory.Api.Data;
 using ThePictory.Api.Dtos;
@@ -78,19 +77,18 @@ public class ContactController : ControllerBase
             try
             {
                 var client = _httpClientFactory.CreateClient("GoogleSheets");
-                var payload = new
+                var queryParams = new Dictionary<string, string?>
                 {
-                    name = submission.FullName,
-                    eventType = submission.EventType,
-                    eventDate = submission.PhotographyDays,
-                    budget = submission.Budget,
-                    email = submission.Email,
-                    whatsapp = formattedWhatsApp
+                    ["name"] = submission.FullName,
+                    ["eventType"] = submission.EventType,
+                    ["eventDate"] = submission.PhotographyDays,
+                    ["budget"] = submission.Budget,
+                    ["email"] = submission.Email,
+                    ["whatsapp"] = formattedWhatsApp
                 };
 
-                var json = JsonSerializer.Serialize(payload);
-                using var content = new StringContent(json, Encoding.UTF8, "text/plain");
-                using var response = await client.PostAsync(webhookUrl, content, ct);
+                var requestUrl = QueryHelpers.AddQueryString(webhookUrl, queryParams);
+                using var response = await client.GetAsync(requestUrl, ct);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
