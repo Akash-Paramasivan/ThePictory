@@ -1,4 +1,5 @@
-using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -87,7 +88,9 @@ public class ContactController : ControllerBase
                     whatsapp = formattedWhatsApp
                 };
 
-                using var response = await client.PostAsJsonAsync(webhookUrl, payload, ct);
+                var json = JsonSerializer.Serialize(payload);
+                using var content = new StringContent(json, Encoding.UTF8, "text/plain");
+                using var response = await client.PostAsync(webhookUrl, content, ct);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
